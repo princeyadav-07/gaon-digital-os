@@ -1,0 +1,1647 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gaon Digital OS | Smart Village Platform</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+
+:root{
+    --primary:#2563eb;
+    --secondary:#16a34a;
+    --danger:#dc2626;
+    --warning:#f59e0b;
+    --bg:#f1f5f9;
+    --card:#ffffff;
+    --text:#172033;
+    --muted:#64748b;
+    --border:#e2e8f0;
+}
+
+body{
+    background:var(--bg);
+    color:var(--text);
+    transition:.3s;
+}
+
+body.dark{
+    --bg:#0f172a;
+    --card:#1e293b;
+    --text:#f8fafc;
+    --muted:#cbd5e1;
+    --border:#334155;
+}
+
+/* HEADER */
+header{
+    height:65px;
+    background:var(--card);
+    border-bottom:1px solid var(--border);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 20px;
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    z-index:1000;
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:20px;
+    font-weight:bold;
+    color:var(--primary);
+}
+
+.logo-icon{
+    width:40px;
+    height:40px;
+    background:var(--primary);
+    color:white;
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:22px;
+}
+
+.header-right{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.icon-btn{
+    border:0;
+    background:var(--bg);
+    width:40px;
+    height:40px;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:18px;
+    color:var(--text);
+}
+
+.user-btn{
+    border:0;
+    background:var(--primary);
+    color:white;
+    padding:10px 15px;
+    border-radius:9px;
+    cursor:pointer;
+}
+
+/* SIDEBAR */
+.sidebar{
+    position:fixed;
+    top:65px;
+    left:0;
+    width:245px;
+    bottom:0;
+    background:var(--card);
+    border-right:1px solid var(--border);
+    padding:15px 10px;
+    overflow-y:auto;
+}
+
+.nav-title{
+    color:var(--muted);
+    font-size:12px;
+    padding:10px;
+    text-transform:uppercase;
+}
+
+.nav-btn{
+    width:100%;
+    border:0;
+    background:transparent;
+    color:var(--text);
+    padding:12px;
+    border-radius:9px;
+    text-align:left;
+    cursor:pointer;
+    margin-bottom:3px;
+    font-size:14px;
+}
+
+.nav-btn:hover,
+.nav-btn.active{
+    background:#dbeafe;
+    color:var(--primary);
+    font-weight:bold;
+}
+
+body.dark .nav-btn:hover,
+body.dark .nav-btn.active{
+    background:#172554;
+}
+
+/* MAIN */
+main{
+    margin-left:245px;
+    padding:90px 25px 30px;
+}
+
+.page{
+    display:none;
+}
+
+.page.active{
+    display:block;
+}
+
+.page-title{
+    margin-bottom:20px;
+}
+
+.page-title h1{
+    font-size:28px;
+}
+
+.page-title p{
+    color:var(--muted);
+    margin-top:5px;
+}
+
+/* HERO */
+.hero{
+    background:linear-gradient(135deg,#2563eb,#4f46e5);
+    color:white;
+    padding:30px;
+    border-radius:18px;
+    margin-bottom:22px;
+}
+
+.hero h1{
+    font-size:30px;
+    margin-bottom:8px;
+}
+
+.hero p{
+    opacity:.9;
+}
+
+/* SEARCH */
+.search-box{
+    display:flex;
+    gap:10px;
+    margin-top:20px;
+}
+
+.search-box input{
+    flex:1;
+    padding:14px;
+    border:0;
+    border-radius:10px;
+    outline:none;
+    font-size:15px;
+}
+
+.btn{
+    border:0;
+    padding:12px 18px;
+    border-radius:9px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.btn-primary{
+    background:var(--primary);
+    color:white;
+}
+
+.btn-success{
+    background:var(--secondary);
+    color:white;
+}
+
+.btn-danger{
+    background:var(--danger);
+    color:white;
+}
+
+.btn-warning{
+    background:var(--warning);
+    color:white;
+}
+
+/* STATS */
+.stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+    margin-bottom:25px;
+}
+
+.stat{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:20px;
+}
+
+.stat-icon{
+    font-size:28px;
+}
+
+.stat h2{
+    margin-top:10px;
+}
+
+.stat p{
+    color:var(--muted);
+    font-size:13px;
+}
+
+/* CARDS */
+.grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:18px;
+}
+
+.card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:20px;
+}
+
+.card:hover{
+    transform:translateY(-2px);
+    transition:.2s;
+}
+
+.card-icon{
+    font-size:32px;
+    margin-bottom:12px;
+}
+
+.card h3{
+    margin-bottom:8px;
+}
+
+.card p{
+    color:var(--muted);
+    font-size:14px;
+    line-height:1.5;
+}
+
+.card-actions{
+    margin-top:15px;
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+}
+
+/* NOTICE */
+.notice{
+    background:var(--card);
+    border:1px solid var(--border);
+    padding:17px;
+    border-radius:12px;
+    margin-bottom:12px;
+    display:flex;
+    gap:15px;
+}
+
+.notice-icon{
+    font-size:25px;
+}
+
+.notice small{
+    color:var(--muted);
+}
+
+/* FORM */
+.form-box{
+    background:var(--card);
+    border:1px solid var(--border);
+    padding:22px;
+    border-radius:15px;
+    max-width:750px;
+}
+
+.form-group{
+    margin-bottom:15px;
+}
+
+.form-group label{
+    display:block;
+    margin-bottom:7px;
+    font-weight:bold;
+    font-size:14px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea{
+    width:100%;
+    padding:12px;
+    border:1px solid var(--border);
+    background:var(--bg);
+    color:var(--text);
+    border-radius:8px;
+    outline:none;
+}
+
+.form-group textarea{
+    min-height:120px;
+    resize:vertical;
+}
+
+/* COMPLAINT */
+.complaint{
+    background:var(--card);
+    border:1px solid var(--border);
+    padding:18px;
+    border-radius:12px;
+    margin-top:12px;
+}
+
+.status{
+    display:inline-block;
+    padding:5px 9px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.status.submitted{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+.status.working{
+    background:#dbeafe;
+    color:#1d4ed8;
+}
+
+.status.solved{
+    background:#dcfce7;
+    color:#166534;
+}
+
+/* ADMIN */
+.admin-box{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:15px;
+    padding:20px;
+    margin-bottom:20px;
+}
+
+.admin-tabs{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-bottom:20px;
+}
+
+.admin-tab{
+    border:1px solid var(--border);
+    background:var(--bg);
+    color:var(--text);
+    padding:10px 14px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.admin-tab.active{
+    background:var(--primary);
+    color:white;
+}
+
+/* TABLE */
+.table-wrap{
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th,td{
+    padding:12px;
+    border-bottom:1px solid var(--border);
+    text-align:left;
+    font-size:14px;
+}
+
+th{
+    background:var(--bg);
+}
+
+/* MODAL */
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.6);
+    z-index:3000;
+    align-items:center;
+    justify-content:center;
+    padding:15px;
+}
+
+.modal.show{
+    display:flex;
+}
+
+.modal-content{
+    background:var(--card);
+    color:var(--text);
+    width:100%;
+    max-width:500px;
+    max-height:90vh;
+    overflow:auto;
+    border-radius:16px;
+    padding:25px;
+}
+
+.modal-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.close{
+    border:0;
+    background:transparent;
+    font-size:25px;
+    cursor:pointer;
+    color:var(--text);
+}
+
+/* LOGIN */
+.login-card{
+    max-width:420px;
+    margin:40px auto;
+}
+
+/* EMERGENCY */
+.emergency-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:15px;
+}
+
+.emergency{
+    padding:25px;
+    border-radius:15px;
+    color:white;
+    text-align:center;
+}
+
+.emergency h2{
+    font-size:30px;
+    margin:10px 0;
+}
+
+.e112{background:#dc2626}
+.e108{background:#2563eb}
+.e101{background:#f59e0b}
+
+/* TOAST */
+.toast{
+    position:fixed;
+    right:20px;
+    bottom:20px;
+    background:#111827;
+    color:white;
+    padding:14px 20px;
+    border-radius:10px;
+    display:none;
+    z-index:5000;
+}
+
+.toast.show{
+    display:block;
+}
+
+/* MOBILE */
+.mobile-menu{
+    display:none;
+}
+
+@media(max-width:900px){
+    .sidebar{
+        width:220px;
+    }
+
+    main{
+        margin-left:220px;
+    }
+
+    .stats{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+
+@media(max-width:700px){
+    header{
+        padding:0 10px;
+    }
+
+    .logo span{
+        display:none;
+    }
+
+    .mobile-menu{
+        display:block;
+    }
+
+    .sidebar{
+        transform:translateX(-100%);
+        transition:.3s;
+        z-index:2000;
+    }
+
+    .sidebar.open{
+        transform:translateX(0);
+    }
+
+    main{
+        margin-left:0;
+        padding:85px 12px 25px;
+    }
+
+    .stats,
+    .grid,
+    .emergency-grid{
+        grid-template-columns:1fr;
+    }
+
+    .hero{
+        padding:22px;
+    }
+
+    .hero h1{
+        font-size:23px;
+    }
+
+    .page-title h1{
+        font-size:23px;
+    }
+
+    .search-box{
+        flex-direction:column;
+    }
+
+    .user-btn{
+        padding:9px;
+    }
+}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<header>
+    <div class="logo">
+        <button class="icon-btn mobile-menu" onclick="toggleSidebar()">☰</button>
+        <div class="logo-icon">🏡</div>
+        <span>Gaon Digital OS</span>
+    </div>
+
+    <div class="header-right">
+        <button class="icon-btn" onclick="showNotifications()">🔔</button>
+        <button class="icon-btn" onclick="toggleDark()">🌙</button>
+        <button class="user-btn" onclick="openLogin()">👤 Login</button>
+    </div>
+</header>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+
+    <div class="nav-title">Main</div>
+
+    <button class="nav-btn active" onclick="showPage('dashboard',this)">🏠 Dashboard</button>
+    <button class="nav-btn" onclick="showPage('schemes',this)">🏛️ Sarkari Yojana</button>
+    <button class="nav-btn" onclick="showPage('jobs',this)">💼 Jobs</button>
+    <button class="nav-btn" onclick="showPage('education',this)">🎓 Education</button>
+
+    <div class="nav-title">Village Services</div>
+
+    <button class="nav-btn" onclick="showPage('kisan',this)">🌾 Kisan</button>
+    <button class="nav-btn" onclick="showPage('health',this)">🏥 Health</button>
+    <button class="nav-btn" onclick="showPage('business',this)">🏪 Local Business</button>
+    <button class="nav-btn" onclick="showPage('workers',this)">👷 Local Workers</button>
+    <button class="nav-btn" onclick="showPage('documents',this)">📄 Documents</button>
+
+    <div class="nav-title">Community</div>
+
+    <button class="nav-btn" onclick="showPage('notices',this)">📢 Notice Board</button>
+    <button class="nav-btn" onclick="showPage('complaint',this)">📝 Complaint</button>
+    <button class="nav-btn" onclick="showPage('emergency',this)">🚨 Emergency</button>
+
+    <div class="nav-title">Management</div>
+
+    <button class="nav-btn" onclick="openAdminLogin()">🛡️ Admin Panel</button>
+
+</aside>
+
+
+<!-- MAIN -->
+<main>
+
+<!-- DASHBOARD -->
+<section id="dashboard" class="page active">
+
+    <div class="hero">
+        <h1>नमस्ते! 👋 आपका अपना Digital Gaon</h1>
+        <p>गाँव की जानकारी और सेवाएँ अब एक ही जगह।</p>
+
+        <div class="search-box">
+            <input id="globalSearch" placeholder="🔎 योजना, नौकरी, दुकान, सेवा खोजें..." onkeyup="globalSearch()">
+            <button class="btn btn-primary" onclick="globalSearch()">Search</button>
+        </div>
+    </div>
+
+    <div class="stats">
+        <div class="stat">
+            <div class="stat-icon">📢</div>
+            <h2 id="noticeCount">0</h2>
+            <p>Village Notices</p>
+        </div>
+
+        <div class="stat">
+            <div class="stat-icon">💼</div>
+            <h2>08</h2>
+            <p>Jobs</p>
+        </div>
+
+        <div class="stat">
+            <div class="stat-icon">🏪</div>
+            <h2>15</h2>
+            <p>Local Businesses</p>
+        </div>
+
+        <div class="stat">
+            <div class="stat-icon">🏛️</div>
+            <h2>06</h2>
+            <p>Government Schemes</p>
+        </div>
+    </div>
+
+    <h2 style="margin-bottom:15px">⭐ Popular Services</h2>
+
+    <div class="grid">
+
+        <div class="card">
+            <div class="card-icon">🏛️</div>
+            <h3>सरकारी योजनाएँ</h3>
+            <p>गाँव के लोगों के लिए उपलब्ध सरकारी योजनाओं की जानकारी।</p>
+            <div class="card-actions">
+                <button class="btn btn-primary" onclick="showPageById('schemes')">देखें</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-icon">📝</div>
+            <h3>शिकायत दर्ज करें</h3>
+            <p>गाँव की समस्या सीधे digital complaint system में दर्ज करें।</p>
+            <div class="card-actions">
+                <button class="btn btn-primary" onclick="showPageById('complaint')">Complaint</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-icon">💼</div>
+            <h3>Local Jobs</h3>
+            <p>गाँव और आसपास उपलब्ध नौकरी और रोजगार के अवसर।</p>
+            <div class="card-actions">
+                <button class="btn btn-primary" onclick="showPageById('jobs')">Jobs देखें</button>
+            </div>
+        </div>
+
+    </div>
+
+    <h2 style="margin:25px 0 15px">📢 Latest Notices</h2>
+    <div id="dashboardNotices"></div>
+
+</section>
+
+
+<!-- SCHEMES -->
+<section id="schemes" class="page">
+
+    <div class="page-title">
+        <h1>🏛️ Sarkari Yojana</h1>
+        <p>सरकारी योजनाओं की उपयोगी जानकारी</p>
+    </div>
+
+    <div class="grid">
+
+        <div class="card">
+            <div class="card-icon">🏠</div>
+            <h3>PM Awas Yojana</h3>
+            <p>पात्र परिवारों को पक्का घर बनाने के लिए सहायता।</p>
+            <button class="btn btn-primary" onclick="info('PM Awas Yojana','पात्रता और आवेदन की जानकारी संबंधित सरकारी पोर्टल से सत्यापित करें।')">Details</button>
+        </div>
+
+        <div class="card">
+            <div class="card-icon">🌾</div>
+            <h3>PM-KISAN</h3>
+            <p>किसानों के लिए केंद्र सरकार की आर्थिक सहायता योजना।</p>
+            <button class="btn btn-primary" onclick="info('PM-KISAN','अपना लाभार्थी status और आवेदन की जानकारी आधिकारिक पोर्टल पर जांचें।')">Details</button>
+        </div>
+
+        <div class="card">
+            <div class="card-icon">🏦</div>
+            <h3>Jan Dhan Yojana</h3>
+            <p>Financial inclusion और basic banking services।</p>
+            <button class="btn btn-primary" onclick="info('Jan Dhan Yojana','नजदीकी बैंक/BC से account और उपलब्ध सुविधाओं की जानकारी लें।')">Details</button>
+        </div>
+
+        <div class="card">
+            <div class="card-icon">👩</div>
+            <h3>Women Schemes</h3>
+            <p>महिलाओं के लिए विभिन्न सरकारी योजनाएँ।</p>
+            <button class="btn btn-primary" onclick="info('Women Schemes','स्थानीय विभाग और official government portal से eligibility check करें।')">Details</button>
+        </div>
+
+        <div class="card">
+            <div class="card-icon">🎓</div>
+            <h3>Scholarship</h3>
+            <p>विद्यार्थियों के लिए scholarship information।</p>
+            <button class="btn btn-primary" onclick="info('Scholarship','अपनी class/category के अनुसार official scholarship portal पर जानकारी देखें।')">Details</button>
+        </div>
+
+        <div class="card">
+            <div class="card-icon">🩺</div>
+            <h3>Health Schemes</h3>
+            <p>स्वास्थ्य से संबंधित सरकारी सुविधाएँ।</p>
+            <button class="btn btn-primary" onclick="info('Health Schemes','सरकारी health centre और official scheme portal से जानकारी verify करें।')">Details</button>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- JOBS -->
+<section id="jobs" class="page">
+
+    <div class="page-title">
+        <h1>💼 Jobs & Employment</h1>
+        <p>नौकरी और रोजगार के अवसर</p>
+    </div>
+
+    <div class="grid">
+
+        <div class="card">
+            <div class="card-icon">💻</div>
+            <h3>Computer Operator</h3>
+            <p>Basic computer और data entry का काम।</p>
+            <p><b>Location:</b> Nearby</p>
+            <button class="btn btn-primary" onclick="info('Computer Operator','Job details और application के लिए employer से contact करें।')">Apply Info</button>
+        </div>
+
+        <div class="card">
+            <div class="card-icon">🏪</div>
+            <h3>Shop Assistant</h3>
+            <p>Local shop में full-time work opportunity।</p>
+            <p><b>Type:</b> Local Job</p>
+            <button class="btn btn-primary" onclick="info('Shop Assistant','Employer द्वारा application और interview process बताया जाएगा।')">Details</button>
+        </div>
+
+        <div class="card">
+            <div class="card-icon">👨‍💻</div>
+            <h3>Web Developer</h3>
+            <p>Website development और computer work।</p>
+            <button class="btn btn-primary" onclick="info('Web Developer','Skills: HTML, CSS, JavaScript और basic programming।')">Details</button>
+        </div>
+
+        <div class="card">
+            <div class="card-icon">🚚</div>
+            <h3>Delivery Worker</h3>
+            <p>Local delivery और logistics work।</p>
+            <button class="btn btn-primary" onclick="info('Delivery Worker','Driving और local area knowledge उपयोगी हो सकती है।')">Details</button>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- EDUCATION -->
+<section id="education" class="page">
+
+    <div class="page-title">
+        <h1>🎓 Education</h1>
+        <p>विद्यार्थियों के लिए learning resources</p>
+    </div>
+
+    <div class="grid">
+
+        <div class="card">
+            <div class="card-icon">📚</div>
+            <h3>Study Resources</h3>
+            <p>School और competitive exam की तैयारी के resources।</p>
+        </div>
+
+        <div class="card">
+            <div class="card-icon">📝</div>
+            <h3>Scholarship</h3>
+            <p>छात्रों के लिए scholarship information और guidance।</p>
+        </div>
+
+        <div class="card">
+            <div class="card-icon">🎯</div>
+            <h3>Competitive Exams</h3>
+            <p>SSC, Railway, Banking और अन्य परीक्षाओं की तैयारी।</p>
+        </div>
+
+        <div class="card">
+            <div class="card-icon">🏫</div>
+            <h3>Local Schools</h3>
+            <p>गाँव और आसपास के educational institutions की जानकारी।</p>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- KISAN -->
+<section id="kisan" class="page">
+
+    <div class="page-title">
+        <h1>🌾 Kisan Seva</h1>
+        <p>किसानों के लिए digital सुविधा</p>
+    </div>
+
+    <div class="grid">
+
+        <div class="card">
+            <div class="card-icon">🌤️</div>
+            <h3>Weather</h3>
+            <p>Weather information यहाँ future में API से connect की जा सकती है।</p>
+        </div>
+
+        <div class="card">
+            <div class="card-icon">📈</div>
+            <h3>Mandi Bhav</h3>
+            <p>फसलों के current mandi prices future में API से दिखाए जा सकते हैं।</p>
+        </div>
+
+        <div class="card">
+            <div class="card-icon">💧</div>
+            <h3>Water Information</h3>
+            <p>सिंचाई और जल संबंधी जानकारी।</p>
+        </div>
+
+        <div class="card">
+            <div class="card-icon">🌱</div>
+            <h3>Farming Tips</h3>
+            <p>फसल, मिट्टी और खेती से संबंधित educational resources।</p>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- HEALTH -->
+<section id="health" class="page">
+
+    <div class="page-title">
+        <h1>🏥 Health Services</h1>
+        <p>गाँव में health related सहायता</p>
+    </div>
+
+    <div class="grid">
+
+        <div class="card">
+            <div class="card-icon">🏥</div>
+            <h3>Nearby Hospital</h3>
+            <p>नजदीकी सरकारी/निजी hospital की जानकारी यहाँ जोड़ी जा सकती है।</p>
+        </div>
+
+        <div class="card">
+            <div class="card-icon">💊</div>
+            <h3>Medical Store</h3>
+            <p>Local medical stores की directory।</p>
+        </div>
+
+        <div class="card">
+            <div class="card-icon">🚑</div>
+            <h3>Emergency</h3>
+            <p>Emergency situation में तुरंत emergency services से contact करें।</p>
+            <button class="btn btn-danger" onclick="showPageById('emergency')">Emergency</button>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- BUSINESS -->
+<section id="business" class="page">
+
+    <div class="page-title">
+        <h1>🏪 Local Business</h1>
+        <p>गाँव के दुकानदार और छोटे व्यवसाय</p>
+    </div>
+
+    <div class="grid">
+
+        <div class="card">
+            <div class="card-icon">🛒</div>
+            <h3>Prince General Store</h3>
+            <p>Daily grocery और household products।</p>
+            <div class="card-actions">
+                <button class="btn btn-success" onclick="info('Prince General Store','Local grocery store profile।')">View</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-icon">📸</div>
+            <h3>Digital Studio</h3>
+            <p>Photo, video, printing और digital services।</p>
+            <button class="btn btn-success" onclick="info('Digital Studio','Photo/video, printing और अन्य digital services।')">View</button>
+        </div>
+
+        <div class="card">
+            <div class="card-icon">🔧</div>
+            <h3>Repair Center</h3>
+            <p>Mobile/electronic repair services।</p>
+            <button class="btn btn-success" onclick="info('Repair Center','Local repair service profile।')">View</button>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- WORKERS -->
+<section id="workers" class="page">
+
+    <div class="page-title">
+        <h1>👷 Local Workers</h1>
+        <p>गाँव के skilled workers खोजें</p>
+    </div>
+
+    <div class="grid">
+
+        <div class="card">
+            <div class="card-icon">⚡</div>
+            <h3>Electrician</h3>
+            <p>घर की electrical repairing और wiring service।</p>
+            <button class="btn btn-primary" onclick="info('Electrician','Local electrician profile यहाँ जोड़ा जा सकता है।')">Contact</button>
+        </div>
+
+        <div class="card">
+            <div class="card-icon">🚰</div>
+            <h3>Plumber</h3>
+            <p>Water pipe और plumbing work।</p>
+            <button class="btn btn-primary" onclick="info('Plumber','Local plumber profile यहाँ जोड़ा जा सकता है।')">Contact</button>
+        </div>
+
+        <div class="card">
+            <div class="card-icon">🪚</div>
+            <h3>Carpenter</h3>
+            <p>Furniture और wood work।</p>
+            <button class="btn btn-primary" onclick="info('Carpenter','Local carpenter profile यहाँ जोड़ा जा सकता है।')">Contact</button>
+        </div>
+
+        <div class="card">
+            <div class="card-icon">🔧</div>
+            <h3>Mechanic</h3>
+            <p>Bike और vehicle repairing।</p>
+            <button class="btn btn-primary" onclick="info('Mechanic','Local mechanic profile यहाँ जोड़ा जा सकता है।')">Contact</button>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- DOCUMENTS -->
+<section id="documents" class="page">
+
+    <div class="page-title">
+        <h1>📄 Documents & Services</h1>
+        <p>जरूरी documents की जानकारी</p>
+    </div>
+
+    <div class="grid">
+
+        <div class="card">
+            <div class="card-icon">📄</div>
+            <h3>Income Certificate</h3>
+            <p>आय प्रमाण पत्र से संबंधित जानकारी।</p>
+        </div>
+
+        <div class="card">
+            <div class="card-icon">🏠</div>
+            <h3>Residence Certificate</h3>
+            <p>निवास प्रमाण पत्र की जानकारी।</p>
+        </div>
+
+        <div class="card">
+            <div class="card-icon">📑</div>
+            <h3>Caste Certificate</h3>
+            <p>जाति प्रमाण पत्र से संबंधित जानकारी।</p>
+        </div>
+
+        <div class="card">
+            <div class="card-icon">🆔</div>
+            <h3>Other Documents</h3>
+            <p>अन्य government document services।</p>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- NOTICES -->
+<section id="notices" class="page">
+
+    <div class="page-title">
+        <h1>📢 Notice Board</h1>
+        <p>गाँव की latest announcements</p>
+    </div>
+
+    <div id="noticeList"></div>
+
+</section>
+
+
+<!-- COMPLAINT -->
+<section id="complaint" class="page">
+
+    <div class="page-title">
+        <h1>📝 Complaint / शिकायत</h1>
+        <p>गाँव की समस्या online दर्ज करें और status देखें।</p>
+    </div>
+
+    <div class="form-box">
+
+        <div class="form-group">
+            <label>नाम</label>
+            <input id="complaintName" placeholder="अपना नाम">
+        </div>
+
+        <div class="form-group">
+            <label>Mobile Number</label>
+            <input id="complaintMobile" placeholder="10 digit mobile number">
+        </div>
+
+        <div class="form-group">
+            <label>Complaint Category</label>
+            <select id="complaintCategory">
+                <option>Road</option>
+                <option>Water</option>
+                <option>Electricity</option>
+                <option>Street Light</option>
+                <option>Cleanliness</option>
+                <option>Government Service</option>
+                <option>Other</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Complaint</label>
+            <textarea id="complaintText" placeholder="अपनी समस्या विस्तार से लिखें..."></textarea>
+        </div>
+
+        <button class="btn btn-primary" onclick="submitComplaint()">Complaint Submit करें</button>
+
+    </div>
+
+    <h2 style="margin:25px 0 10px">📋 My Complaints</h2>
+
+    <div id="myComplaints"></div>
+
+</section>
+
+
+<!-- EMERGENCY -->
+<section id="emergency" class="page">
+
+    <div class="page-title">
+        <h1>🚨 Emergency Services</h1>
+        <p>Emergency में संबंधित service से तुरंत संपर्क करें।</p>
+    </div>
+
+    <div class="emergency-grid">
+
+        <a href="tel:112" style="text-decoration:none">
+            <div class="emergency e112">
+                <div style="font-size:40px">🚨</div>
+                <h2>112</h2>
+                <p>Emergency</p>
+            </div>
+        </a>
+
+        <a href="tel:108" style="text-decoration:none">
+            <div class="emergency e108">
+                <div style="font-size:40px">🚑</div>
+                <h2>108</h2>
+                <p>Ambulance</p>
+            </div>
+        </a>
+
+        <a href="tel:101" style="text-decoration:none">
+            <div class="emergency e101">
+                <div style="font-size:40px">🔥</div>
+                <h2>101</h2>
+                <p>Fire Service</p>
+            </div>
+        </a>
+
+    </div>
+
+</section>
+
+
+<!-- ADMIN -->
+<section id="admin" class="page">
+
+    <div class="page-title">
+        <h1>🛡️ Admin Panel</h1>
+        <p>Village Digital OS management dashboard</p>
+    </div>
+
+    <div class="stats">
+
+        <div class="stat">
+            <div class="stat-icon">👥</div>
+            <h2 id="adminUsers">0</h2>
+            <p>Registered Citizens</p>
+        </div>
+
+        <div class="stat">
+            <div class="stat-icon">📢</div>
+            <h2 id="adminNotices">0</h2>
+            <p>Total Notices</p>
+        </div>
+
+        <div class="stat">
+            <div class="stat-icon">📝</div>
+            <h2 id="adminComplaints">0</h2>
+            <p>Total Complaints</p>
+        </div>
+
+        <div class="stat">
+            <div class="stat-icon">✅</div>
+            <h2 id="solvedComplaints">0</h2>
+            <p>Solved Complaints</p>
+        </div>
+
+    </div>
+
+    <div class="admin-tabs">
+        <button class="admin-tab active" onclick="adminTab('adminNoticesBox',this)">📢 Notices</button>
+        <button class="admin-tab" onclick="adminTab('adminComplaintsBox',this)">📝 Complaints</button>
+        <button class="admin-tab" onclick="adminTab('adminUsersBox',this)">👥 Citizens</button>
+        <button class="admin-tab" onclick="adminTab('adminDataBox',this)">📦 Data Add</button>
+    </div>
+
+
+    <!-- ADMIN NOTICE -->
+    <div id="adminNoticesBox" class="admin-box admin-section">
+
+        <h2 style="margin-bottom:15px">➕ Add New Notice</h2>
+
+        <div class="form-group">
+            <label>Notice Title</label>
+            <input id="newNoticeTitle" placeholder="Notice title">
+        </div>
+
+        <div class="form-group">
+            <label>Notice Description</label>
+            <textarea id="newNoticeText" placeholder="Notice details"></textarea>
+        </div>
+
+        <button class="btn btn-success" onclick="addNotice()">Notice Publish करें</button>
+
+        <hr style="margin:25px 0;border:0;border-top:1px solid var(--border)">
+
+        <h2>📢 Manage Notices</h2>
+        <div id="adminNoticeList" style="margin-top:15px"></div>
+
+    </div>
+
+
+    <!-- ADMIN COMPLAINTS -->
+    <div id="adminComplaintsBox" class="admin-box admin-section" style="display:none">
+
+        <h2 style="margin-bottom:15px">📝 Complaint Management</h2>
+
+        <div id="adminComplaintList"></div>
+
+    </div>
+
+
+    <!-- ADMIN DATA -->
+    <div id="adminDataBox" class="admin-box admin-section" style="display:none">
+      <h2>📦 Add Village Data</h2>
+      <p style="color:var(--muted);margin:6px 0 18px">Admin यहाँ से live database में scheme, job, business और worker जोड़ सकता है।</p>
+      <div class="grid">
+        <div class="card">
+          <h3>🏛️ Scheme</h3>
+          <div class="form-group"><input id="schemeName" placeholder="Scheme name"></div>
+          <div class="form-group"><textarea id="schemeDesc" placeholder="Description"></textarea></div>
+          <div class="form-group"><input id="schemeEligibility" placeholder="Eligibility"></div>
+          <button class="btn btn-success" onclick="addScheme()">Add Scheme</button>
+        </div>
+        <div class="card">
+          <h3>💼 Job</h3>
+          <div class="form-group"><input id="jobTitle" placeholder="Job title"></div>
+          <div class="form-group"><input id="jobCompany" placeholder="Company"></div>
+          <div class="form-group"><input id="jobLocation" placeholder="Location"></div>
+          <div class="form-group"><input id="jobSalary" placeholder="Salary"></div>
+          <button class="btn btn-success" onclick="addJob()">Add Job</button>
+        </div>
+        <div class="card">
+          <h3>🏪 Business</h3>
+          <div class="form-group"><input id="bizName" placeholder="Business name"></div>
+          <div class="form-group"><input id="bizCategory" placeholder="Category"></div>
+          <div class="form-group"><input id="bizVillage" value="Jaukabad" placeholder="Village"></div>
+          <div class="form-group"><input id="bizMobile" placeholder="Mobile"></div>
+          <button class="btn btn-success" onclick="addBusiness()">Add Business</button>
+        </div>
+        <div class="card">
+          <h3>👷 Worker</h3>
+          <div class="form-group"><input id="workerName" placeholder="Worker name"></div>
+          <div class="form-group"><input id="workerSkill" placeholder="Skill e.g. Electrician"></div>
+          <div class="form-group"><input id="workerVillage" value="Jaukabad" placeholder="Village"></div>
+          <div class="form-group"><input id="workerMobile" placeholder="Mobile"></div>
+          <button class="btn btn-success" onclick="addWorker()">Add Worker</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADMIN USERS -->
+    <div id="adminUsersBox" class="admin-box admin-section" style="display:none">
+
+        <h2 style="margin-bottom:15px">👥 Registered Citizens</h2>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Mobile</th>
+                        <th>Village</th>
+                    </tr>
+                </thead>
+
+                <tbody id="userTable"></tbody>
+            </table>
+        </div>
+
+    </div>
+
+</section>
+
+</main>
+
+
+<!-- LOGIN MODAL -->
+<div class="modal" id="loginModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>👤 Citizen Login / Register</h2>
+      <button class="close" onclick="closeModal('loginModal')">×</button>
+    </div>
+    <div class="form-group"><label>Name (Register के लिए)</label><input id="userName" placeholder="आपका नाम"></div>
+    <div class="form-group"><label>Mobile</label><input id="userMobile" maxlength="10" placeholder="10 digit mobile"></div>
+    <div class="form-group"><label>Village</label><input id="userVillage" value="Jaukabad" placeholder="Village"></div>
+    <div class="form-group"><label>Email</label><input id="userEmail" type="email" placeholder="you@example.com"></div>
+    <div class="form-group"><label>Password</label><input id="userPassword" type="password" minlength="6" placeholder="कम से कम 6 characters"></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-success" onclick="registerUser()">Register</button>
+      <button class="btn btn-primary" onclick="loginUser()">Login</button>
+    </div>
+    <p style="margin-top:14px;color:var(--muted);font-size:13px">पहली बार Register करें। अगर email confirmation चालू है तो email verify करने के बाद Login करें।</p>
+    <button class="btn" style="margin-top:8px;background:var(--bg);color:var(--text);border:1px solid var(--border)" onclick="logoutUser()">Logout</button>
+  </div>
+</div>
+
+<!-- ADMIN LOGIN -->
+<div class="modal" id="adminLoginModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>🛡️ Admin Login</h2>
+      <button class="close" onclick="closeModal('adminLoginModal')">×</button>
+    </div>
+    <div class="form-group"><label>Admin Email</label><input id="adminEmail" type="email" placeholder="admin@example.com"></div>
+    <div class="form-group"><label>Password</label><input id="adminPassword" type="password" placeholder="Password"></div>
+    <button class="btn btn-primary" onclick="adminLogin()">Admin Login</button>
+    <p style="margin-top:15px;color:var(--muted);font-size:13px">Admin account Supabase Auth से बनेगा। किसी citizen को admin बनाने के लिए नीचे दिए गए SQL step का उपयोग करें।</p>
+  </div>
+</div>
+
+<!-- INFO MODAL -->
+<div class="modal" id="infoModal">
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+            <h2 id="infoTitle">Information</h2>
+            <button class="close" onclick="closeModal('infoModal')">×</button>
+        </div>
+
+        <p id="infoText" style="line-height:1.7;color:var(--muted)"></p>
+
+        <button class="btn btn-primary" style="margin-top:20px" onclick="closeModal('infoModal')">
+            Close
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- NOTIFICATION MODAL -->
+<div class="modal" id="notificationModal">
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+            <h2>🔔 Notifications</h2>
+            <button class="close" onclick="closeModal('notificationModal')">×</button>
+        </div>
+
+        <div class="notice">
+            <div>📢</div>
+            <div>
+                <b>Gaon Digital OS चालू है</b>
+                <p>Village services अब एक जगह उपलब्ध हैं।</p>
+            </div>
+        </div>
+
+        <div class="notice">
+            <div>📝</div>
+            <div>
+                <b>Complaint System</b>
+                <p>अपनी समस्या online दर्ज करें और status track करें।</p>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="toast" id="toast"></div>
+
+
+<script>
+/* =========================================================
+   GAON DIGITAL OS - SUPABASE FINAL APP
+   Paste your Project URL and Publishable Key below.
+   Never put a Secret / service_role key here.
+========================================================= */
+const SUPABASE_URL = "https://fmzqheneptnozgifsbtz.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_hyir1SpB9FH-M7nk_6m70A_YNV09Ekl";
+
+let sb = null;
+let currentUser = null;
+let currentProfile = null;
+let notices = [];
+let complaints = [];
+let schemes = [];
+let jobs = [];
+let businesses = [];
+let workers = [];
+
+function configured(){
+  return SUPABASE_URL.startsWith("http") && !SUPABASE_URL.includes("PASTE_") && SUPABASE_PUBLISHABLE_KEY && !SUPABASE_PUBLISHABLE_KEY.includes("PASTE_");
+}
+
+function escapeHTML(text){
+  return String(text ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+}
+function toast(message){
+  const t=document.getElementById("toast"); t.innerText=message; t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"),3000);
+}
+function openModal(id){document.getElementById(id).classList.add("show");}
+function closeModal(id){document.getElementById(id).classList.remove("show");}
+function openLogin(){openModal("loginModal");}
+function openAdminLogin(){openModal("adminLoginModal");}
+function showNotifications(){openModal("notificationModal");}
+window.onclick=e=>document.querySelectorAll(".modal").forEach(m=>{if(e.target===m)m.classList.remove("show")});
+function info(title,text){document.getElementById("infoTitle").innerText=title;document.getElementById("infoText").innerText=text;openModal("infoModal");}
+function toggleSidebar(){document.getElementById("sidebar").classList.toggle("open")}
+function toggleDark(){document.body.classList.toggle("dark");localStorage.setItem("gos_dark",document.body.classList.contains("dark"))}
+if(localStorage.getItem("gos_dark")==="true")document.body.classList.add("dark");
+
+function showPage(page,btn){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  const target=document.getElementById(page); if(target)target.classList.add("active");
+  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
+  if(btn)btn.classList.add("active");
+  document.getElementById("sidebar").classList.remove("open"); window.scrollTo({top:0,behavior:"smooth"});
+  if(page==="notices")loadNotices();
+  if(page==="complaint")loadComplaints();
+  if(page==="schemes")loadSchemes();
+  if(page==="jobs")loadJobs();
+  if(page==="business")loadBusinesses();
+  if(page==="workers")loadWorkers();
+}
+function showPageById(id){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  const target=document.getElementById(id);if(target)target.classList.add("active");
+  document.querySelectorAll(".nav-btn").forEach(b=>{b.classList.remove("active");if(b.getAttribute("onclick")?.includes("'"+id+"'"))b.classList.add("active")});
+  window.scrollTo({top:0,behavior:"smooth"});
+  if(id==="notices")loadNotices(); if(id==="complaint")loadComplaints(); if(id==="schemes")loadSchemes(); if(id==="jobs")loadJobs(); if(id==="business")loadBusinesses(); if(id==="workers")loadWorkers();
+}
+
+async function init(){
+  if(!configured()){toast("पहले main.html में Supabase URL और Publishable Key डालें।");return;}
+  sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+  const {data:{session}}=await sb.auth.getSession();
+  if(session)await setSessionUser(session.user);
+  sb.auth.onAuthStateChange(async (_event,session)=>{if(session)await setSessionUser(session.user);else{currentUser=null;currentProfile=null;updateUserButton();}});
+  await Promise.all([loadNotices(),loadSchemes(),loadJobs(),loadBusinesses(),loadWorkers()]);
+  await loadComplaints();
+}
+
+async function setSessionUser(user){
+  currentUser=user;
+  let {data}=await sb.from("profiles").select("*").eq("id",user.id).maybeSingle();
+  if(!data && user.user_metadata?.name){
+    const {data:created}=await sb.from("profiles").upsert({id:user.id,name:user.user_metadata.name,mobile:user.user_metadata.mobile||"",village:user.user_metadata.village||"Jaukabad",role:"citizen"},{onConflict:"id"}).select().single();
+    data=created||null;
+  }
+  currentProfile=data||null;
+  updateUserButton();
+  if(currentProfile){
+    const n=document.getElementById("complaintName"),m=document.getElementById("complaintMobile");
+    if(n)n.value=currentProfile.name||""; if(m)m.value=currentProfile.mobile||"";
+  }
+}
+function updateUserButton(){
+  const btn=document.querySelector(".user-btn");
+  if(!btn)return;
+  btn.innerText=currentUser?"👤 "+(currentProfile?.name||currentUser.email):"👤 Login";
+}
+
+async function registerUser(){
+  if(!configured())return toast("Supabase connection पहले सेट करें।");
+  const name=document.getElementById("userName").value.trim();
+  const mobile=document.getElementById("userMobile").value.trim();
+  const village=document.getElementById("userVillage").value.trim();
+  const email=document.getElementById("userEmail").value.trim();
+  const password=document.getElementById("userPassword").value;
+  if(!name||!mobile||!village||!email||!password)return toast("सभी जानकारी भरें।");
+  if(!/^[0-9]{10}$/.test(mobile))return toast("सही 10 digit mobile डालें।");
+  if(password.length<6)return toast("Password कम से कम 6 characters का रखें।");
+  const {data,error}=await sb.auth.signUp({email,password,options:{data:{name,mobile,village}}});
+  if(error)return toast(error.message);
+  closeModal("loginModal");
+  toast(data.session?"Registration successful ✅":"Registration successful. Email verify करके Login करें 📧");
+  if(data.session)await setSessionUser(data.user);
+}
+
+async function loginUser(){
+  if(!configured())return toast("Supabase connection पहले सेट करें।");
+  const email=document.getElementById("userEmail").value.trim();
+  const password=document.getElementById("userPassword").value;
+  if(!email||!password)return toast("Email और password डालें।");
+  const {data,error}=await sb.auth.signInWithPassword({email,password});
+  if(error)return toast(error.message);
+  await setSessionUser(data.user);closeModal("loginModal");toast("Login successful 👋");
+}
+async function logoutUser(){
+  if(sb)await sb.auth.signOut();closeModal("loginModal");showPageById("dashboard");toast("Logout successful");
+}
+
+async function loadNotices(){
+  if(!sb)return;
+  const {data,error}=await sb.from("notices").select("*").order("created_at",{ascending:false});
+  if(error){console.error(error);return;} notices=data||[]; renderNotices();
+}
+function renderNotices(){
+  const list=document.getElementById("noticeList"),dash=document.getElementById("dashboardNotices");
+  const html=notices.length?notices.map(n=>`<div class="notice"><div class="notice-icon">📢</div><div><h3>${escapeHTML(n.title)}</h3><p style="margin:6px 0;color:var(--muted)">${escapeHTML(n.description||"")}</p><small>${new Date(n.created_at).toLocaleString("hi-IN")}</small></div></div>`).join(""):"<div class='card'>कोई notice उपलब्ध नहीं है।</div>";
+  if(list)list.innerHTML=html;if(dash)dash.innerHTML=notices.slice(0,3).map(n=>`<div class="notice"><div class="notice-icon">📢</div><div><h3>${escapeHTML(n.title)}</h3><p style="color:var(--muted);margin-top:5px">${escapeHTML(n.description||"")}</p></div></div>`).join("")||"<div class='card'>कोई notice उपलब्ध नहीं है।</div>";
+  const c=document.getElementById("noticeCount");if(c)c.innerText=notices.length;
+  const a=document.getElementById("adminNotices");if(a)a.innerText=notices.length;
+  renderAdminNotices();
+}
+async function addNotice(){
+  if(!(await ensureAdmin()))return;
+  const title=document.getElementById("newNoticeTitle").value.trim(),description=document.getElementById("newNoticeText").value.trim();
+  if(!title||!description)return toast("Notice title और description भरें।");
+  const {error}=await sb.from("notices").insert({title,description,category:"General"});
+  if(error)return toast(error.message);document.getElementById("newNoticeTitle").value="";document.getElementById("newNoticeText").value="";toast("Notice publish हो गया ✅");await loadNotices();
+}
+async function deleteNotice(id){if(!(await ensureAdmin()))return;if(!confirm("Notice delete करें?"))return;const {error}=await sb.from("notices").delete().eq("id",id);if(error)return toast(error.message);toast("Notice deleted");await loadNotices();}
+function renderAdminNotices(){const box=document.getElementById("adminNoticeList");if(!box)return;box.innerHTML=notices.length?notices.map(n=>`<div class="notice"><div style="flex:1"><h3>${escapeHTML(n.title)}</h3><p style="color:var(--muted)">${escapeHTML(n.description||"")}</p></div><button class="btn btn-danger" onclick="deleteNotice(${n.id})">Delete</button></div>`).join(""):"<p style='color:var(--muted)'>No notices.</p>"}
+
+async function loadComplaints(){
+  if(!sb)return;
+  if(!currentUser){renderComplaints([]);return;}
+  const {data,error}=await sb.from("complaints").select("*").eq("user_id",currentUser.id).order("created_at",{ascending:false});
+  if(error){console.error(error);return;}complaints=data||[];renderComplaints(complaints);
+}
+function renderComplaints(list=complaints){
+  const box=document.getElementById("myComplaints");if(!box)return;
+  if(!list.length){box.innerHTML=`<div class="card"><p>${currentUser?"अभी आपकी कोई complaint नहीं है।":"Complaint करने के लिए पहले Login करें।"}</p></div>`;return;}
+  box.innerHTML=list.map(c=>`<div class="complaint"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><div><b>${escapeHTML(c.category)}</b><p style="color:var(--muted);margin-top:5px">ID: ${escapeHTML(c.complaint_id)}</p></div><span class="status ${statusClass(c.status)}">${escapeHTML(c.status)}</span></div><p style="margin-top:12px;line-height:1.6">${escapeHTML(c.description)}</p><small style="color:var(--muted)">${new Date(c.created_at).toLocaleString("hi-IN")}</small></div>`).join("");
+}
+function statusClass(s){return s==="Solved"?"solved":s==="Working"?"working":"submitted"}
+async function submitComplaint(){
+  if(!configured()||!sb)return toast("Supabase connection पहले सेट करें।");
+  if(!currentUser)return toast("Complaint करने के लिए पहले Login करें।");
+  const name=document.getElementById("complaintName").value.trim(),mobile=document.getElementById("complaintMobile").value.trim(),category=document.getElementById("complaintCategory").value,text=document.getElementById("complaintText").value.trim();
+  if(!name||!mobile||!text)return toast("सभी जरूरी जानकारी भरें।");if(!/^[0-9]{10}$/.test(mobile))return toast("सही mobile number डालें।");
+  const complaint_id="GOS-"+Date.now().toString(36).toUpperCase();
+  const {error}=await sb.from("complaints").insert({complaint_id,user_id:currentUser.id,name,mobile,category,description:text,status:"Submitted"});
+  if(error)return toast(error.message);document.getElementById("complaintText").value="";toast("Complaint submitted ✅ ID: "+complaint_id);await loadComplaints();
+}
+
+async function loadSchemes(){if(!sb)return;const {data,error}=await sb.from("schemes").select("*").order("created_at",{ascending:false});if(!error){schemes=data||[];renderDbCards("schemes",schemes,"scheme")}}
+async function loadJobs(){if(!sb)return;const {data,error}=await sb.from("jobs").select("*").order("created_at",{ascending:false});if(!error){jobs=data||[];renderDbCards("jobs",jobs,"job")}}
+async function loadBusinesses(){if(!sb)return;const {data,error}=await sb.from("businesses").select("*").order("created_at",{ascending:false});if(!error){businesses=data||[];renderDbCards("business",businesses,"business")}}
+async function loadWorkers(){if(!sb)return;const {data,error}=await sb.from("workers").select("*").order("created_at",{ascending:false});if(!error){workers=data||[];renderDbCards("workers",workers,"worker")}}
+function renderDbCards(page,data,type){
+  const sec=document.getElementById(page);if(!sec)return;
+  const old=sec.querySelector(".db-live-list");if(old)old.remove();
+  const wrap=document.createElement("div");wrap.className="db-live-list grid";wrap.style.marginTop="20px";
+  if(!data.length){wrap.innerHTML=`<div class="card"><p>अभी database में कोई ${type} data नहीं है।</p></div>`;sec.appendChild(wrap);return;}
+  wrap.innerHTML=data.map(x=>{
+    if(type==="scheme")return `<div class="card"><div class="card-icon">🏛️</div><h3>${escapeHTML(x.name)}</h3><p>${escapeHTML(x.description||"")}</p><p style="margin-top:8px"><b>Eligibility:</b> ${escapeHTML(x.eligibility||"Not specified")}</p></div>`;
+    if(type==="job")return `<div class="card"><div class="card-icon">💼</div><h3>${escapeHTML(x.title)}</h3><p>${escapeHTML(x.company||"")}</p><p><b>Location:</b> ${escapeHTML(x.location||"")}</p><p><b>Salary:</b> ${escapeHTML(x.salary||"")}</p></div>`;
+    if(type==="business")return `<div class="card"><div class="card-icon">🏪</div><h3>${escapeHTML(x.name)}</h3><p>${escapeHTML(x.category||"")}</p><p>${escapeHTML(x.village||"")}</p><p>📱 ${escapeHTML(x.mobile||"")}</p></div>`;
+    return `<div class="card"><div class="card-icon">👷</div><h3>${escapeHTML(x.name)}</h3><p><b>Skill:</b> ${escapeHTML(x.skill||"")}</p><p>${escapeHTML(x.village||"")}</p><p>📱 ${escapeHTML(x.mobile||"")}</p><p><b>Status:</b> ${escapeHTML(x.availability||"Available")}</p></div>`;
+  }).join("");sec.appendChild(wrap);
+}
+
+async function ensureAdmin(){
+  if(!currentUser)return toast("Admin login पहले करें।"),false;
+  if(!currentProfile)await setSessionUser(currentUser);
+  if(currentProfile?.role!=="admin")return toast("आपके account में admin permission नहीं है।"),false;
+  return true;
+}
+async function adminLogin(){
+  if(!configured())return toast("Supabase connection पहले सेट करें।");
+  const email=document.getElementById("adminEmail").value.trim(),password=document.getElementById("adminPassword").value;
+  if(!email||!password)return toast("Admin email और password डालें।");
+  const {data,error}=await sb.auth.signInWithPassword({email,password});
+  if(error)return toast(error.message);
+  await setSessionUser(data.user);
+  if(currentProfile?.role!=="admin"){await sb.auth.signOut();return toast("यह account admin नहीं है।");}
+  closeModal("adminLoginModal");showPageById("admin");await updateAdmin();toast("Admin login successful 🛡️");
+}
+async function updateAdmin(){
+  const a=await ensureAdmin();if(!a)return;
+  const [{count:uc},{count:nc},{count:cc},{count:sc}]=await Promise.all([
+    sb.from("profiles").select("id",{count:"exact",head:true}),
+    sb.from("notices").select("id",{count:"exact",head:true}),
+    sb.from("complaints").select("id",{count:"exact",head:true}),
+    sb.from("complaints").select("id",{count:"exact",head:true}).eq("status","Solved")
+  ]);
+  document.getElementById("adminUsers").innerText=uc||0;document.getElementById("adminNotices").innerText=nc||0;document.getElementById("adminComplaints").innerText=cc||0;document.getElementById("solvedComplaints").innerText=sc||0;
+  renderAdminComplaints();renderAdminNotices();
+}
+async function renderAdminComplaints(){
+  const box=document.getElementById("adminComplaintList");if(!box||!currentUser)return;
+  if(currentProfile?.role!=="admin")return;
+  const {data,error}=await sb.from("complaints").select("*").order("created_at",{ascending:false});
+  if(error)return box.innerHTML=`<div class="card">${escapeHTML(error.message)}</div>`;
+  if(!data?.length){box.innerHTML="<div class='card'>कोई complaint नहीं है।</div>";return;}
+  box.innerHTML=data.map(c=>`<div class="complaint"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px"><div><h3>${escapeHTML(c.category)}</h3><p style="color:var(--muted)">ID: ${escapeHTML(c.complaint_id)}</p><p style="margin-top:8px">👤 ${escapeHTML(c.name)} | 📱 ${escapeHTML(c.mobile)}</p></div><span class="status ${statusClass(c.status)}">${escapeHTML(c.status)}</span></div><p style="margin:12px 0">${escapeHTML(c.description)}</p><select onchange="updateComplaintStatus(${c.id},this.value)" style="padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--bg);color:var(--text)"><option ${c.status==="Submitted"?"selected":""}>Submitted</option><option ${c.status==="Working"?"selected":""}>Working</option><option ${c.status==="Solved"?"selected":""}>Solved</option></select></div>`).join("");
+}
+async function updateComplaintStatus(id,status){if(!(await ensureAdmin()))return;const {error}=await sb.from("complaints").update({status}).eq("id",id);if(error)return toast(error.message);toast("Complaint status updated ✅");await loadComplaints();await updateAdmin();}
+async function renderUsers(){
+  const table=document.getElementById("userTable");if(!table||!currentUser||currentProfile?.role!=="admin")return;
+  const {data,error}=await sb.from("profiles").select("name,mobile,village,role").order("created_at",{ascending:false});
+  if(error){table.innerHTML=`<tr><td colspan="3">${escapeHTML(error.message)}</td></tr>`;return;}
+  table.innerHTML=(data||[]).map(u=>`<tr><td>${escapeHTML(u.name)}</td><td>${escapeHTML(u.mobile)}</td><td>${escapeHTML(u.village)} ${u.role==="admin"?"🛡️":""}</td></tr>`).join("")||"<tr><td colspan='3'>No citizens.</td></tr>";
+}
+function adminTab(id,button){document.querySelectorAll(".admin-section").forEach(s=>s.style.display="none");document.getElementById(id).style.display="block";document.querySelectorAll(".admin-tab").forEach(b=>b.classList.remove("active"));button.classList.add("active");if(id==="adminComplaintsBox")renderAdminComplaints();if(id==="adminUsersBox")renderUsers();}
+
+async function addScheme(){if(!(await ensureAdmin()))return;const name=document.getElementById("schemeName").value.trim(),description=document.getElementById("schemeDesc").value.trim(),eligibility=document.getElementById("schemeEligibility").value.trim();if(!name)return toast("Scheme name भरें।");const {error}=await sb.from("schemes").insert({name,description,eligibility});if(error)return toast(error.message);toast("Scheme added ✅");document.getElementById("schemeName").value="";document.getElementById("schemeDesc").value="";document.getElementById("schemeEligibility").value="";await loadSchemes();}
+async function addJob(){if(!(await ensureAdmin()))return;const title=document.getElementById("jobTitle").value.trim(),company=document.getElementById("jobCompany").value.trim(),location=document.getElementById("jobLocation").value.trim(),salary=document.getElementById("jobSalary").value.trim();if(!title)return toast("Job title भरें।");const {error}=await sb.from("jobs").insert({title,company,location,salary});if(error)return toast(error.message);toast("Job added ✅");["jobTitle","jobCompany","jobLocation","jobSalary"].forEach(id=>document.getElementById(id).value="");await loadJobs();}
+async function addBusiness(){if(!(await ensureAdmin()))return;const name=document.getElementById("bizName").value.trim(),category=document.getElementById("bizCategory").value.trim(),village=document.getElementById("bizVillage").value.trim(),mobile=document.getElementById("bizMobile").value.trim();if(!name)return toast("Business name भरें।");const {error}=await sb.from("businesses").insert({name,category,village,mobile});if(error)return toast(error.message);toast("Business added ✅");["bizName","bizCategory","bizMobile"].forEach(id=>document.getElementById(id).value="");await loadBusinesses();}
+async function addWorker(){if(!(await ensureAdmin()))return;const name=document.getElementById("workerName").value.trim(),skill=document.getElementById("workerSkill").value.trim(),village=document.getElementById("workerVillage").value.trim(),mobile=document.getElementById("workerMobile").value.trim();if(!name||!skill)return toast("Worker name और skill भरें।");const {error}=await sb.from("workers").insert({name,skill,village,mobile});if(error)return toast(error.message);toast("Worker added ✅");["workerName","workerSkill","workerMobile"].forEach(id=>document.getElementById(id).value="");await loadWorkers();}
+
+const searchData=[{title:"PM Awas Yojana",type:"Sarkari Yojana",page:"schemes"},{title:"PM-KISAN",type:"Sarkari Yojana",page:"schemes"},{title:"Computer Operator",type:"Job",page:"jobs"},{title:"Education",type:"Service",page:"education"},{title:"Kisan",type:"Service",page:"kisan"},{title:"Health",type:"Service",page:"health"},{title:"Prince General Store",type:"Business",page:"business"},{title:"Digital Studio",type:"Business",page:"business"},{title:"Electrician",type:"Worker",page:"workers"},{title:"Plumber",type:"Worker",page:"workers"},{title:"Documents",type:"Service",page:"documents"},{title:"Complaint",type:"Service",page:"complaint"},{title:"Emergency",type:"Emergency",page:"emergency"}];
+function globalSearch(){const q=document.getElementById("globalSearch").value.trim().toLowerCase();if(q.length<2)return;const dynamic=[...searchData,...schemes.map(x=>({title:x.name,type:"Sarkari Yojana",page:"schemes"})),...jobs.map(x=>({title:x.title,type:"Job",page:"jobs"})),...businesses.map(x=>({title:x.name,type:"Business",page:"business"})),...workers.map(x=>({title:x.name+" "+x.skill,type:"Worker",page:"workers"}))];const r=dynamic.find(x=>x.title.toLowerCase().includes(q)||x.type.toLowerCase().includes(q));if(r){showPageById(r.page);toast(r.title+" मिला ✅")}else toast("कोई result नहीं मिला।")}
+
+// Fill static page cards with a note that live database content is shown below.
+init();
+</script>
+
+</body>
+</html>
