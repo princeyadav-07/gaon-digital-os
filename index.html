@@ -532,6 +532,54 @@ th{
     display:block;
 }
 
+/* CITIZEN DASHBOARD */
+.citizen-welcome{
+    background:linear-gradient(135deg,#16a34a,#2563eb);
+    color:white;
+    padding:25px;
+    border-radius:18px;
+    margin-bottom:20px;
+}
+.citizen-welcome h1{font-size:28px;margin-bottom:7px}
+.citizen-welcome p{opacity:.92}
+.profile-strip{
+    display:grid;
+    grid-template-columns:1.2fr 1fr 1fr;
+    gap:14px;
+    margin-top:18px;
+}
+.profile-item{
+    background:rgba(255,255,255,.15);
+    border:1px solid rgba(255,255,255,.25);
+    padding:13px;
+    border-radius:12px;
+}
+.profile-item small{display:block;opacity:.8;margin-bottom:4px}
+.citizen-cards{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:15px;
+    margin-bottom:22px;
+}
+.citizen-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:20px;
+}
+.citizen-card .big{font-size:30px}
+.citizen-card h3{margin:8px 0 5px}
+.citizen-card p{color:var(--muted);font-size:13px}
+.citizen-card button{margin-top:13px}
+.dashboard-section-title{margin:22px 0 12px}
+@media(max-width:900px){
+    .citizen-cards{grid-template-columns:repeat(2,1fr)}
+    .profile-strip{grid-template-columns:1fr}
+}
+@media(max-width:700px){
+    .citizen-cards{grid-template-columns:1fr}
+}
+
 /* MOBILE */
 .mobile-menu{
     display:none;
@@ -609,8 +657,72 @@ th{
         padding:9px;
     }
 }
+
+/* =========================================================
+   FINAL VILLAGE SERVICES / WEATHER / MAP
+========================================================= */
+.service-hero{
+  background:linear-gradient(135deg,#0f766e,#2563eb);
+  color:#fff;padding:26px;border-radius:18px;margin-bottom:20px;
+}
+.service-hero h1{font-size:28px;margin-bottom:7px}
+.service-hero p{opacity:.92;line-height:1.6}
+.quick-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:18px 0 22px;
+}
+.quick-action{
+  border:1px solid var(--border);background:var(--card);color:var(--text);
+  border-radius:14px;padding:17px;cursor:pointer;text-align:left;
+  transition:.2s;
+}
+.quick-action:hover{transform:translateY(-2px)}
+.quick-action .qicon{font-size:28px;margin-bottom:8px}
+.quick-action b{display:block;margin-bottom:4px}
+.quick-action span{font-size:12px;color:var(--muted)}
+.live-grid{
+  display:grid;grid-template-columns:1fr 1.35fr;gap:18px;margin-bottom:22px;
+}
+.live-card{
+  background:var(--card);border:1px solid var(--border);border-radius:15px;padding:20px;
+}
+.live-card h2{margin-bottom:12px}
+.weather-main{display:flex;align-items:center;gap:18px}
+.weather-temp{font-size:46px;font-weight:bold}
+.weather-icon{font-size:48px}
+.weather-meta{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:15px}
+.weather-meta div{background:var(--bg);padding:10px;border-radius:9px;font-size:13px}
+.weather-loading{color:var(--muted)}
+#villageMap{height:380px;border-radius:12px;overflow:hidden}
+.map-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.service-list{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:15px;
+}
+.service-list .card{min-height:145px}
+.profile-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.empty-state{
+  padding:20px;border:1px dashed var(--border);border-radius:12px;
+  color:var(--muted);text-align:center;
+}
+.live-badge{
+  display:inline-flex;align-items:center;gap:6px;font-size:12px;
+  padding:5px 9px;border-radius:20px;background:#dcfce7;color:#166534;
+  margin-left:8px;
+}
+@media(max-width:1000px){
+  .quick-grid{grid-template-columns:repeat(2,1fr)}
+  .live-grid{grid-template-columns:1fr}
+  .service-list{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:700px){
+  .quick-grid,.service-list{grid-template-columns:1fr}
+  .service-hero h1{font-size:23px}
+  #villageMap{height:300px}
+}
+
 </style>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 </head>
 
 <body>
@@ -626,7 +738,7 @@ th{
     <div class="header-right">
         <button class="icon-btn" onclick="showNotifications()">🔔</button>
         <button class="icon-btn" onclick="toggleDark()">🌙</button>
-        <button class="user-btn" onclick="openLogin()">👤 Login</button>
+        <button class="user-btn" onclick="handleUserButton()">👤 Login</button>
     </div>
 </header>
 
@@ -636,6 +748,7 @@ th{
     <div class="nav-title">Main</div>
 
     <button class="nav-btn active" onclick="showPage('dashboard',this)">🏠 Dashboard</button>
+    <button class="nav-btn" onclick="openCitizenDashboard()">👤 My Dashboard</button>
     <button class="nav-btn" onclick="showPage('schemes',this)">🏛️ Sarkari Yojana</button>
     <button class="nav-btn" onclick="showPage('jobs',this)">💼 Jobs</button>
     <button class="nav-btn" onclick="showPage('education',this)">🎓 Education</button>
@@ -654,6 +767,11 @@ th{
     <button class="nav-btn" onclick="showPage('complaint',this)">📝 Complaint</button>
     <button class="nav-btn" onclick="showPage('emergency',this)">🚨 Emergency</button>
 
+    <div class="nav-title">Live Village</div>
+
+    <button class="nav-btn" onclick="showPageById('villageServices')">🌐 Village Services</button>
+    <button class="nav-btn" onclick="showPageById('villageServices');setTimeout(initVillageMap,100)">🗺️ Village Map</button>
+
     <div class="nav-title">Management</div>
 
     <button class="nav-btn" onclick="openAdminLogin()">🛡️ Admin Panel</button>
@@ -663,6 +781,84 @@ th{
 
 <!-- MAIN -->
 <main>
+
+<!-- CITIZEN DASHBOARD -->
+<section id="citizenDashboard" class="page">
+
+    <div class="citizen-welcome">
+        <h1>नमस्ते, <span id="citizenName">Citizen</span> 👋</h1>
+        <p>आपके Gaon Digital OS account की जानकारी और आपकी सेवाएँ यहाँ मिलेंगी।</p>
+
+        <div class="profile-strip">
+            <div class="profile-item">
+                <small>📧 Email</small>
+                <b id="citizenEmail">-</b>
+            </div>
+            <div class="profile-item">
+                <small>📱 Mobile</small>
+                <b id="citizenMobile">-</b>
+            </div>
+            <div class="profile-item">
+                <small>📍 Village</small>
+                <b id="citizenVillage">-</b>
+            </div>
+        </div>
+    </div>
+
+    <div class="citizen-cards">
+        <div class="citizen-card">
+            <div class="big">📢</div>
+            <h3>Latest Notices</h3>
+            <p><b id="citizenNoticeCount">0</b> village notices available</p>
+            <button class="btn btn-primary" onclick="showPageById('notices')">Notice देखें</button>
+        </div>
+
+        <div class="citizen-card">
+            <div class="big">📝</div>
+            <h3>My Complaints</h3>
+            <p><b id="citizenComplaintCount">0</b> complaints submitted</p>
+            <button class="btn btn-primary" onclick="showPageById('complaint')">Complaint देखें</button>
+        </div>
+
+        <div class="citizen-card">
+            <div class="big">🏛️</div>
+            <h3>Government Schemes</h3>
+            <p><b id="citizenSchemeCount">0</b> schemes available</p>
+            <button class="btn btn-primary" onclick="showPageById('schemes')">Yojana देखें</button>
+        </div>
+
+        <div class="citizen-card">
+            <div class="big">💼</div>
+            <h3>Jobs</h3>
+            <p><b id="citizenJobCount">0</b> job listings available</p>
+            <button class="btn btn-primary" onclick="showPageById('jobs')">Jobs देखें</button>
+        </div>
+
+        <div class="citizen-card">
+            <div class="big">🏪</div>
+            <h3>Local Business</h3>
+            <p><b id="citizenBusinessCount">0</b> local businesses</p>
+            <button class="btn btn-success" onclick="showPageById('business')">Businesses देखें</button>
+        </div>
+
+        <div class="citizen-card">
+            <div class="big">👷</div>
+            <h3>Local Workers</h3>
+            <p><b id="citizenWorkerCount">0</b> workers listed</p>
+            <button class="btn btn-success" onclick="showPageById('workers')">Workers देखें</button>
+        </div>
+    </div>
+
+    <h2 class="dashboard-section-title">📢 Latest Village Notices</h2>
+    <div id="citizenDashboardNotices"></div>
+
+    <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="showPageById('dashboard')">🏠 Main Dashboard</button>
+        <button class="btn btn-danger" onclick="logoutUser()">🚪 Logout</button>
+    </div>
+
+</section>
+
 
 <!-- DASHBOARD -->
 <section id="dashboard" class="page active">
@@ -686,19 +882,19 @@ th{
 
         <div class="stat">
             <div class="stat-icon">💼</div>
-            <h2>08</h2>
+            <h2 id="jobCount">0</h2>
             <p>Jobs</p>
         </div>
 
         <div class="stat">
             <div class="stat-icon">🏪</div>
-            <h2>15</h2>
+            <h2 id="businessCount">0</h2>
             <p>Local Businesses</p>
         </div>
 
         <div class="stat">
             <div class="stat-icon">🏛️</div>
-            <h2>06</h2>
+            <h2 id="schemeCount">0</h2>
             <p>Government Schemes</p>
         </div>
     </div>
@@ -1169,6 +1365,78 @@ th{
 </section>
 
 
+<!-- VILLAGE SERVICES -->
+<section id="villageServices" class="page">
+
+  <div class="service-hero">
+    <h1>🌐 Digital Village Services <span class="live-badge">● LIVE</span></h1>
+    <p>गाँव की जरूरी जानकारी, मौसम, नक्शा, स्थानीय सेवाएँ और emergency सहायता एक ही जगह।</p>
+  </div>
+
+  <div class="quick-grid">
+    <button class="quick-action" onclick="showPageById('schemes')">
+      <div class="qicon">🏛️</div><b>सरकारी योजनाएँ</b><span>Available schemes देखें</span>
+    </button>
+    <button class="quick-action" onclick="showPageById('jobs')">
+      <div class="qicon">💼</div><b>Jobs</b><span>Local रोजगार opportunities</span>
+    </button>
+    <button class="quick-action" onclick="showPageById('business')">
+      <div class="qicon">🏪</div><b>Local Business</b><span>गाँव के businesses खोजें</span>
+    </button>
+    <button class="quick-action" onclick="showPageById('workers')">
+      <div class="qicon">👷</div><b>Workers</b><span>Skilled workers खोजें</span>
+    </button>
+    <button class="quick-action" onclick="showPageById('notices')">
+      <div class="qicon">📢</div><b>Notice Board</b><span>Latest announcements</span>
+    </button>
+    <button class="quick-action" onclick="showPageById('complaint')">
+      <div class="qicon">📝</div><b>Complaint</b><span>समस्या online दर्ज करें</span>
+    </button>
+    <button class="quick-action" onclick="showPageById('documents')">
+      <div class="qicon">📄</div><b>Documents</b><span>Document services</span>
+    </button>
+    <button class="quick-action" onclick="showPageById('emergency')">
+      <div class="qicon">🚨</div><b>Emergency</b><span>112 / 108 / 101</span>
+    </button>
+  </div>
+
+  <div class="live-grid">
+    <div class="live-card">
+      <h2>🌤️ Live Weather</h2>
+      <div id="liveWeather" class="weather-loading">Weather load हो रहा है...</div>
+      <button class="btn btn-primary" style="margin-top:14px" onclick="loadVillageWeather()">🔄 Refresh Weather</button>
+    </div>
+
+    <div class="live-card">
+      <h2>🗺️ Village Map</h2>
+      <div id="villageMap"></div>
+      <div class="map-actions">
+        <button class="btn btn-primary" onclick="initVillageMap()">📍 Map Refresh</button>
+        <button class="btn" style="background:var(--bg);color:var(--text);border:1px solid var(--border)" onclick="openVillageMap()">🗺️ Full Map</button>
+      </div>
+    </div>
+  </div>
+
+  <h2 style="margin:25px 0 10px">📌 Important Services</h2>
+  <div class="service-list">
+    <div class="card">
+      <div class="card-icon">🚨</div><h3>Emergency</h3>
+      <p>Police / ambulance / fire emergency numbers.</p>
+      <div class="card-actions"><button class="btn btn-danger" onclick="showPageById('emergency')">Open</button></div>
+    </div>
+    <div class="card">
+      <div class="card-icon">📢</div><h3>Village Notices</h3>
+      <p>Admin द्वारा publish की गई latest notices.</p>
+      <div class="card-actions"><button class="btn btn-primary" onclick="showPageById('notices')">View Notices</button></div>
+    </div>
+    <div class="card">
+      <div class="card-icon">👤</div><h3>My Account</h3>
+      <p>Login करके अपना citizen dashboard देखें.</p>
+      <div class="card-actions"><button class="btn btn-success" onclick="handleUserButton()">My Dashboard</button></div>
+    </div>
+  </div>
+</section>
+
 <!-- ADMIN -->
 <section id="admin" class="page">
 
@@ -1210,6 +1478,7 @@ th{
         <button class="admin-tab" onclick="adminTab('adminComplaintsBox',this)">📝 Complaints</button>
         <button class="admin-tab" onclick="adminTab('adminUsersBox',this)">👥 Citizens</button>
         <button class="admin-tab" onclick="adminTab('adminDataBox',this)">📦 Data Add</button>
+         <button class="admin-tab" onclick="adminTab('adminManageBox',this)">⚙️ Manage Data</button>
     </div>
 
 
@@ -1285,6 +1554,13 @@ th{
           <button class="btn btn-success" onclick="addWorker()">Add Worker</button>
         </div>
       </div>
+    </div>
+
+    <!-- ADMIN MANAGE DATA -->
+    <div id="adminManageBox" class="admin-box admin-section" style="display:none">
+      <h2 style="margin-bottom:6px">⚙️ Manage Village Data</h2>
+      <p style="color:var(--muted);margin-bottom:18px">Admin यहाँ से notices, schemes, jobs, businesses और workers को edit/delete कर सकता है।</p>
+      <div id="adminManageList"></div>
     </div>
 
     <!-- ADMIN USERS -->
@@ -1436,8 +1712,37 @@ function toast(message){
 function openModal(id){document.getElementById(id).classList.add("show");}
 function closeModal(id){document.getElementById(id).classList.remove("show");}
 function openLogin(){openModal("loginModal");}
+function handleUserButton(){
+  if(currentUser) openCitizenDashboard();
+  else openLogin();
+}
+function openCitizenDashboard(){
+  if(!currentUser){
+    openLogin();
+    return;
+  }
+  showPageById("citizenDashboard");
+  renderCitizenDashboard();
+}
 function openAdminLogin(){openModal("adminLoginModal");}
-function showNotifications(){openModal("notificationModal");}
+function showNotifications(){
+  const box=document.getElementById("notificationModal");
+  if(!box)return;
+  const content=box.querySelector(".modal-content");
+  if(content){
+    const list=notices.length?notices.slice(0,8).map(n=>`
+      <div class="notice">
+        <div>📢</div>
+        <div>
+          <b>${escapeHTML(n.title)}</b>
+          <p style="margin-top:5px">${escapeHTML(n.description||"")}</p>
+          <small>${n.created_at?new Date(n.created_at).toLocaleString("hi-IN"):""}</small>
+        </div>
+      </div>`).join(""):`<div class="empty-state">अभी कोई नई notification नहीं है।</div>`;
+    content.innerHTML=`<div class="modal-header"><h2>🔔 Notifications</h2><button class="close" onclick="closeModal('notificationModal')">×</button></div>${list}`;
+  }
+  openModal("notificationModal");
+}
 window.onclick=e=>document.querySelectorAll(".modal").forEach(m=>{if(e.target===m)m.classList.remove("show")});
 function info(title,text){document.getElementById("infoTitle").innerText=title;document.getElementById("infoText").innerText=text;openModal("infoModal");}
 function toggleSidebar(){document.getElementById("sidebar").classList.toggle("open")}
@@ -1463,6 +1768,7 @@ function showPageById(id){
   document.querySelectorAll(".nav-btn").forEach(b=>{b.classList.remove("active");if(b.getAttribute("onclick")?.includes("'"+id+"'"))b.classList.add("active")});
   window.scrollTo({top:0,behavior:"smooth"});
   if(id==="notices")loadNotices(); if(id==="complaint")loadComplaints(); if(id==="schemes")loadSchemes(); if(id==="jobs")loadJobs(); if(id==="business")loadBusinesses(); if(id==="workers")loadWorkers();
+  if(id==="villageServices")setTimeout(initLiveVillage,200);
 }
 
 async function init(){
@@ -1473,6 +1779,7 @@ async function init(){
   sb.auth.onAuthStateChange(async (_event,session)=>{if(session)await setSessionUser(session.user);else{currentUser=null;currentProfile=null;updateUserButton();}});
   await Promise.all([loadNotices(),loadSchemes(),loadJobs(),loadBusinesses(),loadWorkers()]);
   await loadComplaints();
+  renderCitizenDashboard();
 }
 
 async function setSessionUser(user){
@@ -1484,6 +1791,7 @@ async function setSessionUser(user){
   }
   currentProfile=data||null;
   updateUserButton();
+  renderCitizenDashboard();
   if(currentProfile){
     const n=document.getElementById("complaintName"),m=document.getElementById("complaintMobile");
     if(n)n.value=currentProfile.name||""; if(m)m.value=currentProfile.mobile||"";
@@ -1493,6 +1801,45 @@ function updateUserButton(){
   const btn=document.querySelector(".user-btn");
   if(!btn)return;
   btn.innerText=currentUser?"👤 "+(currentProfile?.name||currentUser.email):"👤 Login";
+}
+
+function renderCitizenDashboard(){
+  const name=document.getElementById("citizenName");
+  const email=document.getElementById("citizenEmail");
+  const mobile=document.getElementById("citizenMobile");
+  const village=document.getElementById("citizenVillage");
+  const noticeCount=document.getElementById("citizenNoticeCount");
+  const complaintCount=document.getElementById("citizenComplaintCount");
+  const schemeCount=document.getElementById("citizenSchemeCount");
+  const jobCount=document.getElementById("citizenJobCount");
+  const businessCount=document.getElementById("citizenBusinessCount");
+  const workerCount=document.getElementById("citizenWorkerCount");
+
+  if(name)name.innerText=currentProfile?.name||currentUser?.email?.split("@")[0]||"Citizen";
+  if(email)email.innerText=currentUser?.email||"-";
+  if(mobile)mobile.innerText=currentProfile?.mobile||"-";
+  if(village)village.innerText=currentProfile?.village||"Jaukabad";
+  if(noticeCount)noticeCount.innerText=notices.length;
+  if(complaintCount)complaintCount.innerText=complaints.length;
+  if(schemeCount)schemeCount.innerText=schemes.length;
+  if(jobCount)jobCount.innerText=jobs.length;
+  if(businessCount)businessCount.innerText=businesses.length;
+  if(workerCount)workerCount.innerText=workers.length;
+  const pubNotice=document.getElementById("noticeCount");
+  const pubJobs=document.getElementById("jobCount");
+  const pubBiz=document.getElementById("businessCount");
+  const pubScheme=document.getElementById("schemeCount");
+  if(pubNotice)pubNotice.innerText=notices.length;
+  if(pubJobs)pubJobs.innerText=jobs.length;
+  if(pubBiz)pubBiz.innerText=businesses.length;
+  if(pubScheme)pubScheme.innerText=schemes.length;
+
+  const box=document.getElementById("citizenDashboardNotices");
+  if(box){
+    box.innerHTML=notices.length
+      ? notices.slice(0,3).map(n=>`<div class="notice"><div class="notice-icon">📢</div><div><h3>${escapeHTML(n.title)}</h3><p style="color:var(--muted);margin-top:5px">${escapeHTML(n.description||"")}</p><small>${new Date(n.created_at).toLocaleString("hi-IN")}</small></div></div>`).join("")
+      : "<div class='card'>अभी कोई notice उपलब्ध नहीं है।</div>";
+  }
 }
 
 async function registerUser(){
@@ -1535,6 +1882,7 @@ function renderNotices(){
   const html=notices.length?notices.map(n=>`<div class="notice"><div class="notice-icon">📢</div><div><h3>${escapeHTML(n.title)}</h3><p style="margin:6px 0;color:var(--muted)">${escapeHTML(n.description||"")}</p><small>${new Date(n.created_at).toLocaleString("hi-IN")}</small></div></div>`).join(""):"<div class='card'>कोई notice उपलब्ध नहीं है।</div>";
   if(list)list.innerHTML=html;if(dash)dash.innerHTML=notices.slice(0,3).map(n=>`<div class="notice"><div class="notice-icon">📢</div><div><h3>${escapeHTML(n.title)}</h3><p style="color:var(--muted);margin-top:5px">${escapeHTML(n.description||"")}</p></div></div>`).join("")||"<div class='card'>कोई notice उपलब्ध नहीं है।</div>";
   const c=document.getElementById("noticeCount");if(c)c.innerText=notices.length;
+  renderCitizenDashboard();
   const a=document.getElementById("adminNotices");if(a)a.innerText=notices.length;
   renderAdminNotices();
 }
@@ -1546,13 +1894,13 @@ async function addNotice(){
   if(error)return toast(error.message);document.getElementById("newNoticeTitle").value="";document.getElementById("newNoticeText").value="";toast("Notice publish हो गया ✅");await loadNotices();
 }
 async function deleteNotice(id){if(!(await ensureAdmin()))return;if(!confirm("Notice delete करें?"))return;const {error}=await sb.from("notices").delete().eq("id",id);if(error)return toast(error.message);toast("Notice deleted");await loadNotices();}
-function renderAdminNotices(){const box=document.getElementById("adminNoticeList");if(!box)return;box.innerHTML=notices.length?notices.map(n=>`<div class="notice"><div style="flex:1"><h3>${escapeHTML(n.title)}</h3><p style="color:var(--muted)">${escapeHTML(n.description||"")}</p></div><button class="btn btn-danger" onclick="deleteNotice(${n.id})">Delete</button></div>`).join(""):"<p style='color:var(--muted)'>No notices.</p>"}
+function renderAdminNotices(){const box=document.getElementById("adminNoticeList");if(!box)return;box.innerHTML=notices.length?notices.map(n=>`<div class="notice"><div style="flex:1"><h3>${escapeHTML(n.title)}</h3><p style="color:var(--muted)">${escapeHTML(n.description||"")}</p></div><div class="card-actions" style="margin-top:0"><button class="btn btn-warning" onclick="editNotice(${n.id})">✏️ Edit</button><button class="btn btn-danger" onclick="deleteNotice(${n.id})">🗑️ Delete</button></div></div>`).join(""):"<p style='color:var(--muted)'>No notices.</p>"}
 
 async function loadComplaints(){
   if(!sb)return;
   if(!currentUser){renderComplaints([]);return;}
   const {data,error}=await sb.from("complaints").select("*").eq("user_id",currentUser.id).order("created_at",{ascending:false});
-  if(error){console.error(error);return;}complaints=data||[];renderComplaints(complaints);
+  if(error){console.error(error);return;}complaints=data||[];renderComplaints(complaints);renderCitizenDashboard();
 }
 function renderComplaints(list=complaints){
   const box=document.getElementById("myComplaints");if(!box)return;
@@ -1582,8 +1930,8 @@ function renderDbCards(page,data,type){
   wrap.innerHTML=data.map(x=>{
     if(type==="scheme")return `<div class="card"><div class="card-icon">🏛️</div><h3>${escapeHTML(x.name)}</h3><p>${escapeHTML(x.description||"")}</p><p style="margin-top:8px"><b>Eligibility:</b> ${escapeHTML(x.eligibility||"Not specified")}</p></div>`;
     if(type==="job")return `<div class="card"><div class="card-icon">💼</div><h3>${escapeHTML(x.title)}</h3><p>${escapeHTML(x.company||"")}</p><p><b>Location:</b> ${escapeHTML(x.location||"")}</p><p><b>Salary:</b> ${escapeHTML(x.salary||"")}</p></div>`;
-    if(type==="business")return `<div class="card"><div class="card-icon">🏪</div><h3>${escapeHTML(x.name)}</h3><p>${escapeHTML(x.category||"")}</p><p>${escapeHTML(x.village||"")}</p><p>📱 ${escapeHTML(x.mobile||"")}</p></div>`;
-    return `<div class="card"><div class="card-icon">👷</div><h3>${escapeHTML(x.name)}</h3><p><b>Skill:</b> ${escapeHTML(x.skill||"")}</p><p>${escapeHTML(x.village||"")}</p><p>📱 ${escapeHTML(x.mobile||"")}</p><p><b>Status:</b> ${escapeHTML(x.availability||"Available")}</p></div>`;
+    if(type==="business")return `<div class="card"><div class="card-icon">🏪</div><h3>${escapeHTML(x.name)}</h3><p>${escapeHTML(x.category||"")}</p><p>📍 ${escapeHTML(x.village||"")}</p><p>📱 ${escapeHTML(x.mobile||"")}</p><div class="card-actions">${x.mobile?`<a class="btn btn-success" href="tel:${escapeHTML(x.mobile)}">📞 Call</a>`:""}<button class="btn btn-primary" onclick="showPageById('villageServices');setTimeout(initVillageMap,100)">🗺️ Map</button></div></div>`;
+    return `<div class="card"><div class="card-icon">👷</div><h3>${escapeHTML(x.name)}</h3><p><b>Skill:</b> ${escapeHTML(x.skill||"")}</p><p>📍 ${escapeHTML(x.village||"")}</p><p>📱 ${escapeHTML(x.mobile||"")}</p><p><b>Status:</b> ${escapeHTML(x.availability||"Available")}</p><div class="card-actions">${x.mobile?`<a class="btn btn-success" href="tel:${escapeHTML(x.mobile)}">📞 Call</a>`:""}</div></div>`;
   }).join("");sec.appendChild(wrap);
 }
 
@@ -1612,7 +1960,7 @@ async function updateAdmin(){
     sb.from("complaints").select("id",{count:"exact",head:true}).eq("status","Solved")
   ]);
   document.getElementById("adminUsers").innerText=uc||0;document.getElementById("adminNotices").innerText=nc||0;document.getElementById("adminComplaints").innerText=cc||0;document.getElementById("solvedComplaints").innerText=sc||0;
-  renderAdminComplaints();renderAdminNotices();
+  renderAdminComplaints();renderAdminNotices();renderAdminManage();
 }
 async function renderAdminComplaints(){
   const box=document.getElementById("adminComplaintList");if(!box||!currentUser)return;
@@ -1629,7 +1977,63 @@ async function renderUsers(){
   if(error){table.innerHTML=`<tr><td colspan="3">${escapeHTML(error.message)}</td></tr>`;return;}
   table.innerHTML=(data||[]).map(u=>`<tr><td>${escapeHTML(u.name)}</td><td>${escapeHTML(u.mobile)}</td><td>${escapeHTML(u.village)} ${u.role==="admin"?"🛡️":""}</td></tr>`).join("")||"<tr><td colspan='3'>No citizens.</td></tr>";
 }
-function adminTab(id,button){document.querySelectorAll(".admin-section").forEach(s=>s.style.display="none");document.getElementById(id).style.display="block";document.querySelectorAll(".admin-tab").forEach(b=>b.classList.remove("active"));button.classList.add("active");if(id==="adminComplaintsBox")renderAdminComplaints();if(id==="adminUsersBox")renderUsers();}
+function adminTab(id,button){document.querySelectorAll(".admin-section").forEach(s=>s.style.display="none");document.getElementById(id).style.display="block";document.querySelectorAll(".admin-tab").forEach(b=>b.classList.remove("active"));button.classList.add("active");if(id==="adminComplaintsBox")renderAdminComplaints();if(id==="adminUsersBox")renderUsers();if(id==="adminManageBox")renderAdminManage();}
+
+async function editNotice(id){
+  if(!(await ensureAdmin()))return;
+  const n=notices.find(x=>String(x.id)===String(id));if(!n)return;
+  const title=prompt("Notice title:",n.title||"");if(title===null)return;
+  const description=prompt("Notice description:",n.description||"");if(description===null)return;
+  if(!title.trim()||!description.trim())return toast("Title और description खाली नहीं हो सकते।");
+  const {error}=await sb.from("notices").update({title:title.trim(),description:description.trim()}).eq("id",id);
+  if(error)return toast(error.message);toast("Notice updated ✅");await loadNotices();await updateAdmin();
+}
+
+function adminDataRows(title,items,icon,fields,type){
+  const rows=(items||[]).map(x=>{
+    const text=fields.map(f=>`<div><b>${escapeHTML(f.label)}:</b> ${escapeHTML(x[f.key]??"")}</div>`).join("");
+    return `<div class="card" style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap"><div style="flex:1"><h3>${icon} ${escapeHTML(x[fields[0]?.key]??title)}</h3><div style="margin-top:7px;color:var(--muted);font-size:13px;line-height:1.7">${text}</div></div><div class="card-actions" style="margin-top:0"><button class="btn btn-warning" onclick="editVillageData('${type}',${Number(x.id)})">✏️ Edit</button><button class="btn btn-danger" onclick="deleteVillageData('${type}',${Number(x.id)})">🗑️ Delete</button></div></div></div>`;
+  }).join("");
+  return `<div class="admin-box" style="padding:16px"><h3 style="margin-bottom:12px">${icon} ${title} <span style="color:var(--muted);font-size:13px">(${items?.length||0})</span></h3>${rows||`<p style="color:var(--muted)">कोई data नहीं है।</p>`}</div>`;
+}
+
+function renderAdminManage(){
+  const box=document.getElementById("adminManageList");if(!box)return;
+  box.innerHTML=adminDataRows("Notices",notices,"📢",[{key:"title",label:"Title"},{key:"description",label:"Description"}],"notice")
+   +adminDataRows("Schemes",schemes,"🏛️",[{key:"name",label:"Name"},{key:"description",label:"Description"},{key:"eligibility",label:"Eligibility"}],"scheme")
+   +adminDataRows("Jobs",jobs,"💼",[{key:"title",label:"Title"},{key:"company",label:"Company"},{key:"location",label:"Location"},{key:"salary",label:"Salary"}],"job")
+   +adminDataRows("Businesses",businesses,"🏪",[{key:"name",label:"Name"},{key:"category",label:"Category"},{key:"village",label:"Village"},{key:"mobile",label:"Mobile"}],"business")
+   +adminDataRows("Workers",workers,"👷",[{key:"name",label:"Name"},{key:"skill",label:"Skill"},{key:"village",label:"Village"},{key:"mobile",label:"Mobile"},{key:"availability",label:"Availability"}],"worker");
+}
+
+async function editVillageData(type,id){
+  if(!(await ensureAdmin()))return;
+  const map={notice:notices,scheme:schemes,job:jobs,business:businesses,worker:workers};const item=map[type]?.find(x=>String(x.id)===String(id));if(!item)return;
+  const defs={
+    scheme:[['name','Name'],['description','Description'],['eligibility','Eligibility']],
+    job:[['title','Job title'],['company','Company'],['location','Location'],['salary','Salary']],
+    business:[['name','Business name'],['category','Category'],['village','Village'],['mobile','Mobile']],
+    worker:[['name','Worker name'],['skill','Skill'],['village','Village'],['mobile','Mobile'],['availability','Availability']],
+  };
+  if(type==='notice')return editNotice(id);
+  const values={};
+  for(const [key,label] of defs[type]){const v=prompt(label+':',item[key]??'');if(v===null)return;values[key]=v.trim();}
+  if((type==='scheme'&&!values.name)||(type==='job'&&!values.title)||(type==='business'&&!values.name)||(type==='worker'&&(!values.name||!values.skill)))return toast("Required field खाली नहीं हो सकता।");
+  if((type==='business'||type==='worker')&&values.mobile&&!/^[0-9]{10}$/.test(values.mobile))return toast("सही 10 digit mobile number डालें।");
+  const table={scheme:'schemes',job:'jobs',business:'businesses',worker:'workers'}[type];
+  const {error}=await sb.from(table).update(values).eq('id',id);if(error)return toast(error.message);toast("Data updated ✅");
+  if(type==='scheme')await loadSchemes();if(type==='job')await loadJobs();if(type==='business')await loadBusinesses();if(type==='worker')await loadWorkers();
+  renderAdminManage();
+}
+
+async function deleteVillageData(type,id){
+  if(!(await ensureAdmin()))return;
+  const table={notice:'notices',scheme:'schemes',job:'jobs',business:'businesses',worker:'workers'}[type];if(!table)return;
+  if(!confirm("Is data ko permanently delete karna hai?"))return;
+  const {error}=await sb.from(table).delete().eq('id',id);if(error)return toast(error.message);toast("Data deleted ✅");
+  if(type==='notice')await loadNotices();if(type==='scheme')await loadSchemes();if(type==='job')await loadJobs();if(type==='business')await loadBusinesses();if(type==='worker')await loadWorkers();
+  await updateAdmin();renderAdminManage();
+}
 
 async function addScheme(){if(!(await ensureAdmin()))return;const name=document.getElementById("schemeName").value.trim(),description=document.getElementById("schemeDesc").value.trim(),eligibility=document.getElementById("schemeEligibility").value.trim();if(!name)return toast("Scheme name भरें।");const {error}=await sb.from("schemes").insert({name,description,eligibility});if(error)return toast(error.message);toast("Scheme added ✅");document.getElementById("schemeName").value="";document.getElementById("schemeDesc").value="";document.getElementById("schemeEligibility").value="";await loadSchemes();}
 async function addJob(){if(!(await ensureAdmin()))return;const title=document.getElementById("jobTitle").value.trim(),company=document.getElementById("jobCompany").value.trim(),location=document.getElementById("jobLocation").value.trim(),salary=document.getElementById("jobSalary").value.trim();if(!title)return toast("Job title भरें।");const {error}=await sb.from("jobs").insert({title,company,location,salary});if(error)return toast(error.message);toast("Job added ✅");["jobTitle","jobCompany","jobLocation","jobSalary"].forEach(id=>document.getElementById(id).value="");await loadJobs();}
@@ -1637,10 +2041,169 @@ async function addBusiness(){if(!(await ensureAdmin()))return;const name=documen
 async function addWorker(){if(!(await ensureAdmin()))return;const name=document.getElementById("workerName").value.trim(),skill=document.getElementById("workerSkill").value.trim(),village=document.getElementById("workerVillage").value.trim(),mobile=document.getElementById("workerMobile").value.trim();if(!name||!skill)return toast("Worker name और skill भरें।");const {error}=await sb.from("workers").insert({name,skill,village,mobile});if(error)return toast(error.message);toast("Worker added ✅");["workerName","workerSkill","workerMobile"].forEach(id=>document.getElementById(id).value="");await loadWorkers();}
 
 const searchData=[{title:"PM Awas Yojana",type:"Sarkari Yojana",page:"schemes"},{title:"PM-KISAN",type:"Sarkari Yojana",page:"schemes"},{title:"Computer Operator",type:"Job",page:"jobs"},{title:"Education",type:"Service",page:"education"},{title:"Kisan",type:"Service",page:"kisan"},{title:"Health",type:"Service",page:"health"},{title:"Prince General Store",type:"Business",page:"business"},{title:"Digital Studio",type:"Business",page:"business"},{title:"Electrician",type:"Worker",page:"workers"},{title:"Plumber",type:"Worker",page:"workers"},{title:"Documents",type:"Service",page:"documents"},{title:"Complaint",type:"Service",page:"complaint"},{title:"Emergency",type:"Emergency",page:"emergency"}];
+
+/* =========================================================
+   LIVE WEATHER + VILLAGE MAP
+   Weather: Open-Meteo (no API key required)
+   Map: Leaflet + OpenStreetMap
+========================================================= */
+let villageMap=null;
+let villageMarker=null;
+let villageCoords=null;
+
+async function geocodeVillage(){
+  if(villageCoords)return villageCoords;
+
+  const names=["Jaukabad","Khutahan"];
+  for(const name of names){
+    try{
+      const url="https://geocoding-api.open-meteo.com/v1/search?name="+encodeURIComponent(name)+
+        "&count=10&language=en&format=json";
+      const r=await fetch(url);
+      if(!r.ok)continue;
+      const data=await r.json();
+      const results=data?.results||[];
+      const match=results.find(x=>
+        String(x.country||"").toLowerCase()==="india" &&
+        String(x.admin1||"").toLowerCase().includes("uttar")
+      ) || results.find(x=>String(x.country||"").toLowerCase()==="india");
+      if(match){
+        villageCoords={
+          lat:Number(match.latitude),
+          lon:Number(match.longitude),
+          name:[match.name,match.admin2,match.admin1,match.country].filter(Boolean).join(", ")
+        };
+        return villageCoords;
+      }
+    }catch(e){}
+  }
+
+  const queries=[
+    "Jaukabad, Khutahan, Jaunpur, Uttar Pradesh, India",
+    "Khutahan, Jaunpur, Uttar Pradesh, India"
+  ];
+  for(const q of queries){
+    try{
+      const r=await fetch(
+        "https://nominatim.openstreetmap.org/search?format=json&limit=1&q="+encodeURIComponent(q)
+      );
+      if(!r.ok)continue;
+      const data=await r.json();
+      if(data?.length){
+        villageCoords={
+          lat:Number(data[0].lat),
+          lon:Number(data[0].lon),
+          name:data[0].display_name
+        };
+        return villageCoords;
+      }
+    }catch(e){}
+  }
+  return null;
+}
+
+function weatherEmoji(code){
+  if(code===0)return "☀️";
+  if([1,2,3].includes(code))return "🌤️";
+  if([45,48].includes(code))return "🌫️";
+  if([51,53,55,56,57].includes(code))return "🌦️";
+  if([61,63,65,66,67,80,81,82].includes(code))return "🌧️";
+  if([71,73,75,77,85,86].includes(code))return "❄️";
+  if([95,96,99].includes(code))return "⛈️";
+  return "🌡️";
+}
+function weatherText(code){
+  const map={0:"Clear",1:"Mainly clear",2:"Partly cloudy",3:"Overcast",45:"Fog",48:"Fog",
+  51:"Light drizzle",53:"Drizzle",55:"Heavy drizzle",61:"Light rain",63:"Rain",65:"Heavy rain",
+  71:"Snow",80:"Rain showers",81:"Rain showers",82:"Heavy showers",95:"Thunderstorm",96:"Thunderstorm"};
+  return map[code]||"Weather";
+}
+
+async function loadVillageWeather(){
+  const box=document.getElementById("liveWeather");
+  if(!box)return;
+  box.innerHTML='<div class="weather-loading">🌐 Live weather load हो रहा है...</div>';
+  const c=await geocodeVillage();
+  if(!c){
+    box.innerHTML='<div class="empty-state">Weather location नहीं मिल सकी। Internet connection check करें।</div>';
+    return;
+  }
+  try{
+    const url="https://api.open-meteo.com/v1/forecast?latitude="+c.lat+"&longitude="+c.lon+
+      "&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m"+
+      "&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=auto&forecast_days=3";
+    const r=await fetch(url);
+    const d=await r.json();
+    const cur=d.current||{};
+    const day=d.daily||{};
+    const forecast=(day.time||[]).map((date,i)=>`
+      <div style="background:var(--bg);padding:10px;border-radius:10px">
+        <b>${new Date(date).toLocaleDateString("hi-IN",{weekday:"short",day:"numeric",month:"short"})}</b>
+        <div style="font-size:20px;margin:5px 0">${weatherEmoji(day.weather_code?.[i])}</div>
+        <small>${Math.round(day.temperature_2m_min?.[i]??0)}° / ${Math.round(day.temperature_2m_max?.[i]??0)}°</small>
+      </div>`).join("");
+    box.innerHTML=`
+      <div class="weather-main">
+        <div class="weather-icon">${weatherEmoji(cur.weather_code)}</div>
+        <div><div class="weather-temp">${Math.round(cur.temperature_2m??0)}°C</div><b>${weatherText(cur.weather_code)}</b></div>
+      </div>
+      <p style="margin-top:8px;color:var(--muted)">📍 ${escapeHTML(c.name.split(",").slice(0,3).join(", "))}</p>
+      <div class="weather-meta">
+        <div>💧 Humidity <b>${Math.round(cur.relative_humidity_2m??0)}%</b></div>
+        <div>🌡️ Feels like <b>${Math.round(cur.apparent_temperature??0)}°C</b></div>
+        <div>💨 Wind <b>${Math.round(cur.wind_speed_10m??0)} km/h</b></div>
+        <div>🕒 Updated <b>${new Date().toLocaleTimeString("hi-IN",{hour:"2-digit",minute:"2-digit"})}</b></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px">${forecast}</div>
+    `;
+  }catch(e){
+    box.innerHTML='<div class="empty-state">Weather service अभी उपलब्ध नहीं है। थोड़ी देर बाद Refresh करें।</div>';
+  }
+}
+
+async function initVillageMap(){
+  const el=document.getElementById("villageMap");
+  if(!el || typeof L==="undefined")return;
+  const c=await geocodeVillage();
+  if(!c){
+    el.innerHTML='<div class="empty-state" style="margin-top:10px">Map location नहीं मिल सकी। Internet connection check करें।</div>';
+    return;
+  }
+  if(!villageMap){
+    villageMap=L.map(el).setView([c.lat,c.lon],14);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
+      maxZoom:19,
+      attribution:"© OpenStreetMap contributors"
+    }).addTo(villageMap);
+    villageMarker=L.marker([c.lat,c.lon]).addTo(villageMap)
+      .bindPopup("<b>Gaon Digital OS</b><br>"+escapeHTML(c.name.split(",").slice(0,3).join(", ")))
+      .openPopup();
+  }else{
+    villageMap.invalidateSize();
+    villageMap.setView([c.lat,c.lon],14);
+    if(villageMarker)villageMarker.setLatLng([c.lat,c.lon]);
+  }
+  setTimeout(()=>{if(villageMap)villageMap.invalidateSize();},250);
+}
+
+function openVillageMap(){
+  geocodeVillage().then(c=>{
+    if(!c)return toast("Map location नहीं मिली।");
+    const url="https://www.openstreetmap.org/?mlat="+c.lat+"&mlon="+c.lon+"#map=15/"+c.lat+"/"+c.lon;
+    window.open(url,"_blank","noopener");
+  });
+}
+
+function initLiveVillage(){
+  loadVillageWeather();
+  setTimeout(initVillageMap,300);
+}
+
 function globalSearch(){const q=document.getElementById("globalSearch").value.trim().toLowerCase();if(q.length<2)return;const dynamic=[...searchData,...schemes.map(x=>({title:x.name,type:"Sarkari Yojana",page:"schemes"})),...jobs.map(x=>({title:x.title,type:"Job",page:"jobs"})),...businesses.map(x=>({title:x.name,type:"Business",page:"business"})),...workers.map(x=>({title:x.name+" "+x.skill,type:"Worker",page:"workers"}))];const r=dynamic.find(x=>x.title.toLowerCase().includes(q)||x.type.toLowerCase().includes(q));if(r){showPageById(r.page);toast(r.title+" मिला ✅")}else toast("कोई result नहीं मिला।")}
 
 // Fill static page cards with a note that live database content is shown below.
 init();
+setTimeout(initLiveVillage,800);
 </script>
 
 </body>
