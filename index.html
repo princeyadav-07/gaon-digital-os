@@ -719,6 +719,34 @@ th{
   #villageMap{height:300px}
 }
 
+/* =========================================================
+   CITIZEN OS UPGRADE
+========================================================= */
+.citizen-quick{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:20px 0}
+.citizen-mini{background:var(--card);border:1px solid var(--border);border-radius:15px;padding:17px;cursor:pointer;transition:.2s}
+.citizen-mini:hover{transform:translateY(-2px)}
+.citizen-mini .mini-icon{font-size:28px;margin-bottom:7px}
+.citizen-mini b{display:block;margin-bottom:4px}
+.citizen-mini span{font-size:12px;color:var(--muted)}
+.os-two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:20px}
+.os-panel{background:var(--card);border:1px solid var(--border);border-radius:15px;padding:18px}
+.os-panel h2{margin-bottom:13px}
+.request-item{border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px;background:var(--bg)}
+.request-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.timeline{display:flex;gap:8px;margin-top:14px}
+.timeline-step{flex:1;text-align:center;font-size:11px;color:var(--muted);position:relative}
+.timeline-step:before{content:"";display:block;height:7px;border-radius:99px;background:var(--border);margin-bottom:6px}
+.timeline-step.done{color:var(--text);font-weight:700}
+.timeline-step.done:before{background:currentColor}
+.notification-item{display:flex;gap:12px;padding:13px;border-bottom:1px solid var(--border)}
+.notification-item:last-child{border-bottom:0}
+.notification-item .ni-icon{font-size:24px}
+.filter-row{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+.filter-row input,.filter-row select{flex:1;min-width:180px;padding:11px;border:1px solid var(--border);border-radius:9px;background:var(--bg);color:var(--text)}
+.admin-summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}
+@media(max-width:1000px){.citizen-quick{grid-template-columns:repeat(2,1fr)}.os-two-col{grid-template-columns:1fr}.admin-summary-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.citizen-quick{grid-template-columns:1fr}.admin-summary-grid{grid-template-columns:1fr}.timeline{gap:4px}.timeline-step{font-size:9px}}
+
 </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -765,6 +793,7 @@ th{
 
     <button class="nav-btn" onclick="showPage('notices',this)">📢 Notice Board</button>
     <button class="nav-btn" onclick="showPage('complaint',this)">📝 Complaint</button>
+    <button class="nav-btn" onclick="showPageById('serviceRequests')">📄 Service Requests</button>
     <button class="nav-btn" onclick="showPage('emergency',this)">🚨 Emergency</button>
 
     <div class="nav-title">Live Village</div>
@@ -847,6 +876,18 @@ th{
             <p><b id="citizenWorkerCount">0</b> workers listed</p>
             <button class="btn btn-success" onclick="showPageById('workers')">Workers देखें</button>
         </div>
+    </div>
+
+    <div class="citizen-quick">
+        <button class="citizen-mini" onclick="showPageById('serviceRequests')"><div class="mini-icon">📄</div><b>Service Request</b><span>सरकारी/गाँव की सेवा के लिए request भेजें</span></button>
+        <button class="citizen-mini" onclick="showPageById('complaint')"><div class="mini-icon">📝</div><b>Complaint Track</b><span>अपनी शिकायत का current status देखें</span></button>
+        <button class="citizen-mini" onclick="showNotifications()"><div class="mini-icon">🔔</div><b>Notifications</b><span>नई notices और status updates देखें</span></button>
+        <button class="citizen-mini" onclick="showPageById('villageServices')"><div class="mini-icon">🌐</div><b>Village Live</b><span>Weather और village map खोलें</span></button>
+    </div>
+
+    <div class="os-two-col">
+      <div class="os-panel"><h2>📝 Recent Complaints</h2><div id="citizenRecentComplaints"></div></div>
+      <div class="os-panel"><h2>📄 Recent Service Requests</h2><div id="citizenRecentRequests"></div></div>
     </div>
 
     <h2 class="dashboard-section-title">📢 Latest Village Notices</h2>
@@ -1326,6 +1367,34 @@ th{
 </section>
 
 
+<!-- SERVICE REQUESTS -->
+<section id="serviceRequests" class="page">
+  <div class="page-title">
+    <h1>📄 Service Requests</h1>
+    <p>गाँव की जरूरी service के लिए online request भेजें और status track करें।</p>
+  </div>
+
+  <div class="os-two-col">
+    <div class="form-box">
+      <h2 style="margin-bottom:15px">➕ New Service Request</h2>
+      <div class="form-group"><label>नाम</label><input id="requestName" placeholder="अपना नाम"></div>
+      <div class="form-group"><label>Mobile Number</label><input id="requestMobile" maxlength="10" placeholder="10 digit mobile number"></div>
+      <div class="form-group"><label>Service</label>
+        <select id="requestService">
+          <option>Birth Certificate</option><option>Death Certificate</option><option>Income Certificate</option><option>Residence Certificate</option><option>Caste Certificate</option><option>Pension Assistance</option><option>Government Scheme Help</option><option>Street Light</option><option>Water Supply</option><option>Other</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Details</label><textarea id="requestDetails" placeholder="आपको किस सहायता की जरूरत है?"></textarea></div>
+      <button class="btn btn-success" onclick="submitServiceRequest()">Request Submit करें</button>
+    </div>
+    <div class="os-panel">
+      <h2>📋 My Requests</h2>
+      <div id="myServiceRequests"><div class="empty-state">Login करने के बाद आपकी requests यहाँ दिखेंगी।</div></div>
+    </div>
+  </div>
+</section>
+
+
 <!-- EMERGENCY -->
 <section id="emergency" class="page">
 
@@ -1563,6 +1632,12 @@ th{
       <div id="adminManageList"></div>
     </div>
 
+    <!-- ADMIN SERVICE REQUESTS -->
+    <div id="adminRequestsBox" class="admin-box admin-section" style="display:none">
+      <h2 style="margin-bottom:15px">📄 Service Request Management</h2>
+      <div id="adminRequestList"></div>
+    </div>
+
     <!-- ADMIN USERS -->
     <div id="adminUsersBox" class="admin-box admin-section" style="display:none">
 
@@ -1697,6 +1772,7 @@ let schemes = [];
 let jobs = [];
 let businesses = [];
 let workers = [];
+let serviceRequests = [];
 
 function configured(){
   return SUPABASE_URL.startsWith("http") && !SUPABASE_URL.includes("PASTE_") && SUPABASE_PUBLISHABLE_KEY && !SUPABASE_PUBLISHABLE_KEY.includes("PASTE_");
@@ -1726,19 +1802,15 @@ function openCitizenDashboard(){
 }
 function openAdminLogin(){openModal("adminLoginModal");}
 function showNotifications(){
-  const box=document.getElementById("notificationModal");
-  if(!box)return;
+  const box=document.getElementById("notificationModal");if(!box)return;
   const content=box.querySelector(".modal-content");
   if(content){
-    const list=notices.length?notices.slice(0,8).map(n=>`
-      <div class="notice">
-        <div>📢</div>
-        <div>
-          <b>${escapeHTML(n.title)}</b>
-          <p style="margin-top:5px">${escapeHTML(n.description||"")}</p>
-          <small>${n.created_at?new Date(n.created_at).toLocaleString("hi-IN"):""}</small>
-        </div>
-      </div>`).join(""):`<div class="empty-state">अभी कोई नई notification नहीं है।</div>`;
+    const items=[];
+    notices.slice(0,5).forEach(n=>items.push({icon:"📢",title:n.title,text:n.description||"नई village notice",date:n.created_at}));
+    complaints.slice(0,3).forEach(c=>items.push({icon:c.status==="Solved"?"✅":"📝",title:"Complaint "+c.status,text:"Complaint ID: "+c.complaint_id,date:c.created_at}));
+    serviceRequests.slice(0,3).forEach(r=>items.push({icon:r.status==="Solved"?"✅":"📄",title:"Service Request "+(r.status||"Submitted"),text:r.service+" • ID: "+r.request_id,date:r.created_at}));
+    items.sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
+    const list=items.length?items.slice(0,10).map(x=>`<div class="notification-item"><div class="ni-icon">${x.icon}</div><div><b>${escapeHTML(x.title)}</b><p style="margin-top:4px;color:var(--muted)">${escapeHTML(x.text)}</p><small>${x.date?new Date(x.date).toLocaleString("hi-IN"):""}</small></div></div>`).join(""): `<div class="empty-state">अभी कोई notification नहीं है।</div>`;
     content.innerHTML=`<div class="modal-header"><h2>🔔 Notifications</h2><button class="close" onclick="closeModal('notificationModal')">×</button></div>${list}`;
   }
   openModal("notificationModal");
@@ -1761,6 +1833,7 @@ function showPage(page,btn){
   if(page==="jobs")loadJobs();
   if(page==="business")loadBusinesses();
   if(page==="workers")loadWorkers();
+  if(page==="serviceRequests")loadServiceRequests();
 }
 function showPageById(id){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
@@ -1768,6 +1841,7 @@ function showPageById(id){
   document.querySelectorAll(".nav-btn").forEach(b=>{b.classList.remove("active");if(b.getAttribute("onclick")?.includes("'"+id+"'"))b.classList.add("active")});
   window.scrollTo({top:0,behavior:"smooth"});
   if(id==="notices")loadNotices(); if(id==="complaint")loadComplaints(); if(id==="schemes")loadSchemes(); if(id==="jobs")loadJobs(); if(id==="business")loadBusinesses(); if(id==="workers")loadWorkers();
+  if(id==="serviceRequests")loadServiceRequests();
   if(id==="villageServices")setTimeout(initLiveVillage,200);
 }
 
@@ -1779,6 +1853,7 @@ async function init(){
   sb.auth.onAuthStateChange(async (_event,session)=>{if(session)await setSessionUser(session.user);else{currentUser=null;currentProfile=null;updateUserButton();}});
   await Promise.all([loadNotices(),loadSchemes(),loadJobs(),loadBusinesses(),loadWorkers()]);
   await loadComplaints();
+  await loadServiceRequests();
   renderCitizenDashboard();
 }
 
@@ -1795,6 +1870,7 @@ async function setSessionUser(user){
   if(currentProfile){
     const n=document.getElementById("complaintName"),m=document.getElementById("complaintMobile");
     if(n)n.value=currentProfile.name||""; if(m)m.value=currentProfile.mobile||"";
+    const rn=document.getElementById("requestName"),rm=document.getElementById("requestMobile"); if(rn)rn.value=currentProfile.name||""; if(rm)rm.value=currentProfile.mobile||"";
   }
 }
 function updateUserButton(){
@@ -1837,8 +1913,16 @@ function renderCitizenDashboard(){
   const box=document.getElementById("citizenDashboardNotices");
   if(box){
     box.innerHTML=notices.length
-      ? notices.slice(0,3).map(n=>`<div class="notice"><div class="notice-icon">📢</div><div><h3>${escapeHTML(n.title)}</h3><p style="color:var(--muted);margin-top:5px">${escapeHTML(n.description||"")}</p><small>${new Date(n.created_at).toLocaleString("hi-IN")}</small></div></div>`).join("")
+      ? notices.slice(0,3).map(n=>`<div class="notice"><div class="notice-icon">📢</div><div><h3>${escapeHTML(n.title)}</h3><p style="color:var(--muted);margin-top:5px">${escapeHTML(n.description||"")}</p><small>${n.created_at?new Date(n.created_at).toLocaleString("hi-IN"):""}</small></div></div>`).join("")
       : "<div class='card'>अभी कोई notice उपलब्ध नहीं है।</div>";
+  }
+  const rc=document.getElementById("citizenRecentComplaints");
+  if(rc){
+    rc.innerHTML=complaints.length?complaints.slice(0,3).map(c=>`<div class="request-item"><div class="request-head"><b>${escapeHTML(c.category)}</b><span class="status ${statusClass(c.status)}">${escapeHTML(c.status)}</span></div><small style="color:var(--muted)">ID: ${escapeHTML(c.complaint_id)}</small></div>`).join(""):"<div class='empty-state'>अभी कोई complaint नहीं है।</div>";
+  }
+  const rr=document.getElementById("citizenRecentRequests");
+  if(rr){
+    rr.innerHTML=serviceRequests.length?serviceRequests.slice(0,3).map(r=>`<div class="request-item"><div class="request-head"><b>${escapeHTML(r.service)}</b><span class="status ${statusClass(r.status)}">${escapeHTML(r.status)}</span></div><small style="color:var(--muted)">ID: ${escapeHTML(r.request_id)}</small></div>`).join(""):"<div class='empty-state'>अभी कोई service request नहीं है।</div>";
   }
 }
 
@@ -1918,6 +2002,49 @@ async function submitComplaint(){
   if(error)return toast(error.message);document.getElementById("complaintText").value="";toast("Complaint submitted ✅ ID: "+complaint_id);await loadComplaints();
 }
 
+async function loadServiceRequests(){
+  if(!sb)return;
+  if(!currentUser){serviceRequests=[];renderServiceRequests();renderCitizenDashboard();return;}
+  const {data,error}=await sb.from("service_requests").select("*").eq("user_id",currentUser.id).order("created_at",{ascending:false});
+  if(error){console.error(error);serviceRequests=[];renderServiceRequests();renderCitizenDashboard();return;}
+  serviceRequests=data||[];renderServiceRequests();renderCitizenDashboard();
+}
+function requestStatusClass(s){return statusClass(s||"Submitted")}
+function requestTimeline(status){
+  const order=["Submitted","Working","Solved"],idx=Math.max(0,order.indexOf(status));
+  return `<div class="timeline">${order.map((x,i)=>`<div class="timeline-step ${i<=idx?"done":""}">${i===0?"📥":i===1?"🔧":"✅"}<br>${x}</div>`).join("")}</div>`;
+}
+function renderServiceRequests(){
+  const box=document.getElementById("myServiceRequests");if(!box)return;
+  if(!currentUser){box.innerHTML='<div class="empty-state">Login करने के बाद आपकी requests यहाँ दिखेंगी।</div>';return;}
+  if(!serviceRequests.length){box.innerHTML='<div class="empty-state">अभी कोई service request नहीं है।</div>';return;}
+  box.innerHTML=serviceRequests.map(r=>`<div class="request-item"><div class="request-head"><div><b>${escapeHTML(r.service)}</b><div style="color:var(--muted);font-size:12px;margin-top:4px">ID: ${escapeHTML(r.request_id)}</div></div><span class="status ${requestStatusClass(r.status)}">${escapeHTML(r.status||"Submitted")}</span></div><p style="margin:10px 0;line-height:1.6">${escapeHTML(r.details||"")}</p><small style="color:var(--muted)">${r.created_at?new Date(r.created_at).toLocaleString("hi-IN"):""}</small>${requestTimeline(r.status||"Submitted")}</div>`).join("");
+}
+async function submitServiceRequest(){
+  if(!configured()||!sb)return toast("Supabase connection पहले सेट करें।");
+  if(!currentUser)return toast("Service request के लिए पहले Login करें।");
+  const name=document.getElementById("requestName").value.trim(),mobile=document.getElementById("requestMobile").value.trim(),service=document.getElementById("requestService").value,details=document.getElementById("requestDetails").value.trim();
+  if(!name||!mobile||!details)return toast("सभी जरूरी जानकारी भरें।");
+  if(!/^[0-9]{10}$/.test(mobile))return toast("सही mobile number डालें।");
+  const request_id="REQ-"+Date.now().toString(36).toUpperCase();
+  const {error}=await sb.from("service_requests").insert({request_id,user_id:currentUser.id,name,mobile,service,details,status:"Submitted"});
+  if(error)return toast(error.message);
+  document.getElementById("requestDetails").value="";toast("Service request submitted ✅ ID: "+request_id);await loadServiceRequests();
+}
+async function renderAdminRequests(){
+  const box=document.getElementById("adminRequestList");if(!box||!currentUser||currentProfile?.role!=="admin")return;
+  const {data,error}=await sb.from("service_requests").select("*").order("created_at",{ascending:false});
+  if(error){box.innerHTML=`<div class="card">${escapeHTML(error.message)}</div>`;return;}
+  if(!data?.length){box.innerHTML="<div class='card'>कोई service request नहीं है।</div>";return;}
+  box.innerHTML=data.map(r=>`<div class="complaint"><div class="request-head"><div><h3>${escapeHTML(r.service)}</h3><p style="color:var(--muted)">ID: ${escapeHTML(r.request_id)}</p><p style="margin-top:8px">👤 ${escapeHTML(r.name)} | 📱 ${escapeHTML(r.mobile)}</p></div><span class="status ${requestStatusClass(r.status)}">${escapeHTML(r.status||"Submitted")}</span></div><p style="margin:12px 0">${escapeHTML(r.details||"")}</p><select onchange="updateServiceRequestStatus(${r.id},this.value)" style="padding:9px;border:1px solid var(--border);border-radius:7px;background:var(--bg);color:var(--text)"><option ${r.status==="Submitted"?"selected":""}>Submitted</option><option ${r.status==="Working"?"selected":""}>Working</option><option ${r.status==="Solved"?"selected":""}>Solved</option></select></div>`).join("");
+}
+async function updateServiceRequestStatus(id,status){
+  if(!(await ensureAdmin()))return;
+  const {error}=await sb.from("service_requests").update({status}).eq("id",id);
+  if(error)return toast(error.message);
+  toast("Service request status updated ✅");await loadServiceRequests();await renderAdminRequests();
+}
+
 async function loadSchemes(){if(!sb)return;const {data,error}=await sb.from("schemes").select("*").order("created_at",{ascending:false});if(!error){schemes=data||[];renderDbCards("schemes",schemes,"scheme")}}
 async function loadJobs(){if(!sb)return;const {data,error}=await sb.from("jobs").select("*").order("created_at",{ascending:false});if(!error){jobs=data||[];renderDbCards("jobs",jobs,"job")}}
 async function loadBusinesses(){if(!sb)return;const {data,error}=await sb.from("businesses").select("*").order("created_at",{ascending:false});if(!error){businesses=data||[];renderDbCards("business",businesses,"business")}}
@@ -1960,7 +2087,7 @@ async function updateAdmin(){
     sb.from("complaints").select("id",{count:"exact",head:true}).eq("status","Solved")
   ]);
   document.getElementById("adminUsers").innerText=uc||0;document.getElementById("adminNotices").innerText=nc||0;document.getElementById("adminComplaints").innerText=cc||0;document.getElementById("solvedComplaints").innerText=sc||0;
-  renderAdminComplaints();renderAdminNotices();renderAdminManage();
+  renderAdminComplaints();renderAdminRequests();renderAdminNotices();renderAdminManage();
 }
 async function renderAdminComplaints(){
   const box=document.getElementById("adminComplaintList");if(!box||!currentUser)return;
@@ -1977,7 +2104,7 @@ async function renderUsers(){
   if(error){table.innerHTML=`<tr><td colspan="3">${escapeHTML(error.message)}</td></tr>`;return;}
   table.innerHTML=(data||[]).map(u=>`<tr><td>${escapeHTML(u.name)}</td><td>${escapeHTML(u.mobile)}</td><td>${escapeHTML(u.village)} ${u.role==="admin"?"🛡️":""}</td></tr>`).join("")||"<tr><td colspan='3'>No citizens.</td></tr>";
 }
-function adminTab(id,button){document.querySelectorAll(".admin-section").forEach(s=>s.style.display="none");document.getElementById(id).style.display="block";document.querySelectorAll(".admin-tab").forEach(b=>b.classList.remove("active"));button.classList.add("active");if(id==="adminComplaintsBox")renderAdminComplaints();if(id==="adminUsersBox")renderUsers();if(id==="adminManageBox")renderAdminManage();}
+function adminTab(id,button){document.querySelectorAll(".admin-section").forEach(s=>s.style.display="none");document.getElementById(id).style.display="block";document.querySelectorAll(".admin-tab").forEach(b=>b.classList.remove("active"));button.classList.add("active");if(id==="adminComplaintsBox")renderAdminComplaints();if(id==="adminRequestsBox")renderAdminRequests();if(id==="adminUsersBox")renderUsers();if(id==="adminManageBox")renderAdminManage();}
 
 async function editNotice(id){
   if(!(await ensureAdmin()))return;
@@ -2199,7 +2326,19 @@ function initLiveVillage(){
   setTimeout(initVillageMap,300);
 }
 
-function globalSearch(){const q=document.getElementById("globalSearch").value.trim().toLowerCase();if(q.length<2)return;const dynamic=[...searchData,...schemes.map(x=>({title:x.name,type:"Sarkari Yojana",page:"schemes"})),...jobs.map(x=>({title:x.title,type:"Job",page:"jobs"})),...businesses.map(x=>({title:x.name,type:"Business",page:"business"})),...workers.map(x=>({title:x.name+" "+x.skill,type:"Worker",page:"workers"}))];const r=dynamic.find(x=>x.title.toLowerCase().includes(q)||x.type.toLowerCase().includes(q));if(r){showPageById(r.page);toast(r.title+" मिला ✅")}else toast("कोई result नहीं मिला।")}
+function globalSearch(){
+  const input=document.getElementById("globalSearch"),q=input?.value.trim().toLowerCase();
+  if(q.length<2)return;
+  const dynamic=[...searchData,
+    ...schemes.map(x=>({title:x.name,type:"Sarkari Yojana",page:"schemes"})),
+    ...jobs.map(x=>({title:x.title,type:"Job",page:"jobs"})),
+    ...businesses.map(x=>({title:x.name,type:"Business",page:"business"})),
+    ...workers.map(x=>({title:x.name+" "+x.skill,type:"Worker",page:"workers"})),
+    {title:"Service Request",type:"Service",page:"serviceRequests"},{title:"Village Map",type:"Service",page:"villageServices"},{title:"Weather",type:"Service",page:"villageServices"},{title:"Emergency",type:"Emergency",page:"emergency"}];
+  const matches=dynamic.filter(x=>x.title.toLowerCase().includes(q)||x.type.toLowerCase().includes(q));
+  if(matches.length){showPageById(matches[0].page);toast(matches.length>1?`${matches.length} results मिले ✅`:matches[0].title+" मिला ✅");}
+  else toast("कोई result नहीं मिला।");
+}
 
 // Fill static page cards with a note that live database content is shown below.
 init();
